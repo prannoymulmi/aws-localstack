@@ -1,12 +1,19 @@
 #! /bin/bash
 
-cd src
-zip function.zip index.js
 
-aws --profile=localstack  lambda create-function \
-    --function-name hello-world \
-    --runtime nodejs18.x \
-    --zip-file fileb://function.zip \
-    --handler index.handler \
-    --role arn:aws:iam::000000000000:role/lambda-role \
-    --tags '{"_custom_id_":"hello-world-lambda"}'
+
+BUCKET_NAME="state-bucket"
+
+# Check if the bucket exists
+if ! awslocal s3api head-bucket --bucket "$BUCKET_NAME" 2>/dev/null; then
+    # Create the bucket if it doesn't exist
+    echo "Bucket does not exist, creating it..."
+    awslocal s3api create-bucket --bucket "$BUCKET_NAME"
+    echo "Bucket '$BUCKET_NAME' created."
+else
+    echo "Bucket '$BUCKET_NAME' already exists."
+fi
+
+cd src
+zip lambda_function.zip index.js
+
