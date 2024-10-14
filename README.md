@@ -4,6 +4,8 @@
 
 ### Prerequisites for running Application
 * <a href=https://www.docker.com/>Docker for Local Stack</a>
+* <a href=https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html>AWS CLI</a>
+* 
 
 
 ## Installing Local Stack
