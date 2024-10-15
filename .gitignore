@@ -7,3 +7,7 @@
 */function.zip
 
 */.terraform
+volume
+
+output.txt
+**/output.txt
