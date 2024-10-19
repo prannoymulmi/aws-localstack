@@ -7,10 +7,10 @@
 */function.zip
 dist
 
-
+*/.terraform.lock.hcl
 */.terraform
 volume
 
-
+node_modules
 output.txt
 **/output.txt

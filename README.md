@@ -17,22 +17,31 @@
 * <a href=https://docs.localstack.cloud/getting-started/installation/>How to install Localstack</a>
 * <a href=https://docs.localstack.cloud/getting-started/installation/>How to install Localstack</a>
 
+
 ``` bash
 # Validates the docker-compose.yml, if the configurations are ok
 localstack config validate
-
-## Start Docker compose
-docker run \
-  --rm -it \
-  -p 127.0.0.1:4566:4566 \
-  -p 127.0.0.1:4510-4559:4510-4559 \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  localstack/localstack
 ```
 
+
+
+## How to Start
+
 ```bash
+## Start Docker compose
+docker compose up
+
+./build-and-run.sh
+
 awslocal lambda invoke --function-name lambda-function \
-    --payload '{"body": "{\"name\": \"POKI\", \"num2\": \"10\"}" }' output.txt
+    --payload '{"body": "{\"name\": \"User\"}" }' output.txt
+    
+    
+ #Print log
+awslocal lambda invoke --function-name lambda-function \
+    --payload '{"body": "{\"name\": \"User\"}" }' \
+    response.json && cat response.json
+
 ```
 
 ```json
