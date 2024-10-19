@@ -8,8 +8,9 @@
 * <a href=https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html>AWS CLI</a>
 * <a href=https://github.com/localstack/awscli-local>AWS CLI Local - To run commands for localstack</a>
 * <a href=https://github.com/localstack/terraform-local>Terraform Local</a>
-* <a href=https://github.com/localstack/terraform-local>Node 18 and above</a>
-* <a href=https://github.com/localstack/terraform-local>Yarn Package manager</a>
+* <a href=https://nodejs.org/en/blog/release/v18.17.0>Node 18 and above</a>
+* <a href=https://classic.yarnpkg.com/lang/en/docs/install/#mac-stable>Yarn Package manager</a>
+* <a href=https://docs.localstack.cloud/user-guide/tools/localstack-desktop/>Local Stack Desktop (Optional)</a>. This tool is a UI which helps visualise localstack services and read logs etc.
 * 
 
 ## Installing Local Stack
@@ -25,14 +26,28 @@ localstack config validate
 
 
 
-## How to Start
+## Introduction
 
+### Adding a Service to Localstack
+A ```docker-compose.yml``` file is configured to start the localstack system. If you want to use a service in
+localstack this has to be explicitly defined in the docker-compose file in order to use the service. See
+the example where the services used here are explicitly mentioned in the [file](docker-compose.yml).
+
+```
+     environment:
+      # LocalStack configuration: https://docs.localstack.cloud/references/configuration/
+      - SERVICES=s3,lambda,dynamodb,iam,apigateway,
+```
+
+### How to start localstack
 ```bash
 ## Start Docker compose
 docker compose up
 
+# Builds and starts the project as Localstack community edition is not persistent
 ./build-and-run.sh
 
+# invokes Lambda directly
 awslocal lambda invoke --function-name lambda-function \
     --payload '{"body": "{\"name\": \"User\"}" }' output.txt
     
@@ -42,6 +57,13 @@ awslocal lambda invoke --function-name lambda-function \
     --payload '{"body": "{\"name\": \"User\"}" }' \
     response.json && cat response.json
 
+# Get API    
+awslocal apigateway get-rest-apis
+    
+# Replace {rest_api_id} with the ID of your deployed API Gateway.    
+curl -X POST http://localhost:4566/restapis/{rest_api_id}/dev/ -d '{}'
+curl -X POST http://localhost:4566/restapis/ax3dprkyzw/dev/ -d '{"body": "{\"name\": \"User\"}" }'
+    
 ```
 
 ```json
