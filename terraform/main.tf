@@ -24,15 +24,15 @@ resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
 
 # Define the Lambda function
 resource "aws_lambda_function" "my_lambda" {
-  function_name = "my_lambda_function"
+  function_name = "lambda-function"
   role          = aws_iam_role.lambda_role.arn
-  handler       = "index.handler"
+  handler       = "dist/index.handler"
   runtime       = "nodejs18.x"
 
   # Reference the ZIP file
-  filename      = "${path.module}/../src/lambda_function.zip"
+  filename      = "${path.module}/../dist/lambda_function.zip"
 
-  source_code_hash = filebase64sha256("${path.module}/../src/lambda_function.zip")
+  source_code_hash = filebase64sha256("${path.module}/../dist/lambda_function.zip")
 
   environment {
     variables = {

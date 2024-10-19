@@ -14,6 +14,22 @@ else
     echo "Bucket '$BUCKET_NAME' already exists."
 fi
 
-cd src
-zip lambda_function.zip index.js
+
+rm -rf node_modules
+rm -rf dist
+yarn install
+yarn build
+yarn deploy
+
+# Define the target directory
+tf_dir="./terraform"
+
+# Run commands inside the target directory without changing the current directory
+(
+  cd "$tf_dir" || exit
+  pwd
+  rm -rf .terraform
+  tflocal init
+  tflocal apply -auto-approve
+)
 

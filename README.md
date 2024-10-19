@@ -8,6 +8,9 @@
 * <a href=https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html>AWS CLI</a>
 * <a href=https://github.com/localstack/awscli-local>AWS CLI Local - To run commands for localstack</a>
 * <a href=https://github.com/localstack/terraform-local>Terraform Local</a>
+* <a href=https://github.com/localstack/terraform-local>Node 18 and above</a>
+* <a href=https://github.com/localstack/terraform-local>Yarn Package manager</a>
+* 
 
 ## Installing Local Stack
 
@@ -28,14 +31,14 @@ docker run \
 ```
 
 ```bash
-awslocal lambda invoke --function-name hello-world-lambda \
+awslocal lambda invoke --function-name lambda-function \
     --payload '{"body": "{\"name\": \"POKI\", \"num2\": \"10\"}" }' output.txt
 ```
 
 ```json
 {
-  "FunctionName": "hello-world",
-  "FunctionArn": "arn:aws:lambda:us-east-1:000000000000:function:hello-world",
+  "FunctionName": "lambda-function",
+  "FunctionArn": "arn:aws:lambda:us-east-1:000000000000:function:lambda-function",
   "Runtime": "nodejs18.x",
   "Role": "arn:aws:iam::000000000000:role/lambda-role",
   "Handler": "index.handler",
