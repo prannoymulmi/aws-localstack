@@ -3,7 +3,7 @@
 
 
 BUCKET_NAME="state-bucket"
-
+FIRST_RUN="true"
 # Check if the bucket exists
 if ! awslocal s3api head-bucket --bucket "$BUCKET_NAME" 2>/dev/null; then
     # Create the bucket if it doesn't exist
@@ -12,6 +12,7 @@ if ! awslocal s3api head-bucket --bucket "$BUCKET_NAME" 2>/dev/null; then
     echo "Bucket '$BUCKET_NAME' created."
 else
     echo "Bucket '$BUCKET_NAME' already exists."
+    FIRST_RUN="false"
 fi
 
 
@@ -32,4 +33,33 @@ tf_dir="./terraform"
   tflocal init
   tflocal apply -auto-approve
 )
+
+if FIRST_RUN == "true"; then
+ for i in {1..10}
+ do
+   # Generate a random userId and email
+   userId="user-$RANDOM-$RANDOM"
+   email="user$i@example.com"
+
+   # Insert into DynamoDB using awslocal
+   awslocal dynamodb put-item \
+     --table-name tenant-1-table \
+     --item "{
+         \"id\": {\"S\": \"$userId\"},
+         \"codeVerifier\": {\"S\": \"some-code-verifier-$i\"},
+         \"accessToken\": {\"S\": \"access-token-value-$i\"},
+         \"refreshToken\": {\"S\": \"refresh-token-value-$i\"},
+         \"expiresAt\": {\"N\": \"1700000000\"},
+         \"user_email\": {\"S\": \"$email\"},
+         \"userProfile\": {
+             \"M\": {
+                 \"name\": {\"S\": \"User $i\"},
+                 \"email\": {\"S\": \"$email\"}
+             }
+         }
+     }"
+
+   echo "Inserted user with userId $userId and email $email"
+ done
+fi
 

@@ -84,11 +84,33 @@ awslocal apigateway get-integration \
   --http-method POST
   
 # Curl to call api-gw 
-curl -X POST http://127.0.0.1:4566/restapis/loe4sp8606/test/_user_request_/test \
+curl -X POST http://127.0.0.1:4566/restapis/loe4sp8606/dev/_user_request_/authorize \
 -H "Content-Type: application/json" \
--d '{"name": "tester"}'  
+-d '{"name": "user-5290-12717"}'
 
 # Note:In AWS API Gateway: The actual URL structure in a real API Gateway doesn't contain _user_request_. However, when you interact with API Gateway through LocalStack, _user_request_ is a placeholder that LocalStack uses to differentiate between management APIs (like defining resources) and actual user requests (interacting with your API).
+
+```
+
+### DynamoDB
+
+```bash
+awslocal dynamodb put-item \
+    --table-name tenant-1-table \
+    --item '{
+        "id": {"S": "unique-user-id"},
+        "codeVerifier": {"S": "some-code-verifier"},
+        "idToken": {"S": "id-token-value"},
+        "accessToken": {"S": "access-token-value"},
+        "refreshToken": {"S": "refresh-token-value"},
+        "expiresAt": {"N": "1700000000"},
+        "userProfile": {
+            "M": {
+                "name": {"S": "John Doe"},
+                "email": {"S": "john.doe@example.com"}
+            }
+        }
+    }'
 
 ```
 
