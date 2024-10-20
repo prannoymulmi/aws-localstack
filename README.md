@@ -56,14 +56,40 @@ awslocal lambda invoke --function-name lambda-function \
 awslocal lambda invoke --function-name lambda-function \
     --payload '{"body": "{\"name\": \"User\"}" }' \
     response.json && cat response.json
+```
 
-# Get API    
+### How to call end point in API-GW
+
+``` bash
+
+# Helpful commands: 
+# Get API all APIS   
 awslocal apigateway get-rest-apis
-    
-# Replace {rest_api_id} with the ID of your deployed API Gateway.    
-curl -X POST http://localhost:4566/restapis/{rest_api_id}/dev/ -d '{}'
-curl -X POST http://localhost:4566/restapis/ax3dprkyzw/dev/ -d '{"body": "{\"name\": \"User\"}" }'
-    
+
+# Get resources assoiated with api-ge    
+awslocal apigateway get-resources --rest-api-id loe4sp8606
+
+# To test lambda without using cli
+awslocal apigateway test-invoke-method \
+  --rest-api-id loe4sp8606 \
+  --resource-id 0dajq28nzj \
+  --http-method POST \
+  --path-with-query-string "/test" \
+  --body '{"name": "testtt"}'
+
+# Check the integration
+awslocal apigateway get-integration \
+  --rest-api-id u5wgld5kmt \
+  --resource-id u3shefvycy \
+  --http-method POST
+  
+# Curl to call api-gw 
+curl -X POST http://127.0.0.1:4566/restapis/loe4sp8606/test/_user_request_/test \
+-H "Content-Type: application/json" \
+-d '{"name": "tester"}'  
+
+# Note:In AWS API Gateway: The actual URL structure in a real API Gateway doesn't contain _user_request_. However, when you interact with API Gateway through LocalStack, _user_request_ is a placeholder that LocalStack uses to differentiate between management APIs (like defining resources) and actual user requests (interacting with your API).
+
 ```
 
 ```json
