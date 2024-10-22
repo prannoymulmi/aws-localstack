@@ -34,11 +34,13 @@ tf_dir="./terraform"
 
 # Check if it's the first run
 if $FIRST_RUN; then
-  for i in {1..10}
+  for k in {1..2}
   do
-    # Generate a random userId and email
-    userId="user-$RANDOM-$RANDOM"
-    email="user$i@example.com"
+    for i in {1..10}
+      do
+        # Generate a random userId and email
+        userId="user-$RANDOM-$RANDOM"
+        email="user$i@example.com"
 
         # Insert into DynamoDB using awslocal
         awslocal dynamodb put-item \
@@ -60,4 +62,5 @@ if $FIRST_RUN; then
 
         echo "Inserted user with userId $userId and email $email in tenant-$k-table"
       done
+  done
 fi
