@@ -81,10 +81,6 @@ resource "aws_dynamodb_table" "tenant_2" {
 }
 
 
-provider "aws" {
-  region = "us-east-1"  # Adjust to your desired region
-}
-
 # Create DynamoDB Table for the Tenant Catalog
 resource "aws_dynamodb_table" "catalog_table" {
   name           = "catalog-table"  # Name of the catalog table
