@@ -84,9 +84,9 @@ awslocal apigateway get-integration \
   --http-method POST
   
 # Curl to call api-gw 
-curl -X POST http://127.0.0.1:4566/restapis/loe4sp8606/dev/_user_request_/authorize \
+curl -X POST http://127.0.0.1:4566/restapis/lzwqap4ziu/dev/_user_request_/authorize \
 -H "Content-Type: application/json" \
--d '{"name": "user-5290-12717"}'
+-d '{"name": "user-19036-22688"}'
 
 # Note:In AWS API Gateway: The actual URL structure in a real API Gateway doesn't contain _user_request_. However, when you interact with API Gateway through LocalStack, _user_request_ is a placeholder that LocalStack uses to differentiate between management APIs (like defining resources) and actual user requests (interacting with your API).
 

@@ -11,13 +11,15 @@ resource "aws_iam_policy" "lambda_dynamodb_policy" {
         Action = [
           "dynamodb:PutItem",
           "dynamodb:GetItem",
-          "dynamodb:UpdateItem",
-          "dynamodb:DeleteItem",
           "dynamodb:Query",
           "dynamodb:Scan"
         ],
         Effect   = "Allow",
-        Resource = "${aws_dynamodb_table.tenant_1.arn}"
+        Resource = [
+          aws_dynamodb_table.tenant_1.arn,
+          aws_dynamodb_table.tenant_2.arn,
+          aws_dynamodb_table.catalog_table.arn
+        ]
       }
     ]
   })

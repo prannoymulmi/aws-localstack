@@ -5,6 +5,17 @@ const dynamoDbClient = new DynamoDBClient({ region: 'us-east-1' }); // Adjust th
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     try {
+        // Parse the tenant ID from the request headers
+        const tenantId = event.headers['tenant-id'];
+        if (!tenantId) {
+            return {
+                statusCode: 400,
+                body: JSON.stringify({
+                    message: "Missing 'tenant-id' in request headers",
+                }),
+            };
+        }
+
         // Parse the request body
         let body = JSON.parse(event.body ? event.body : '{}');
 
@@ -18,24 +29,48 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
             };
         }
 
-        // Define parameters for DynamoDB GetItemCommand
-        const params = {
-            TableName: 'tenant-1-table',  // Replace with your DynamoDB table name
+        // Define parameters to get tenant's table name from the catalog DynamoDB table
+        const catalogParams = {
+            TableName: 'catalog-table',  // Replace with your catalog DynamoDB table name
             Key: {
-                id: { S: body.name },  // Assuming userId is the primary key
+                tenantId: { S: tenantId },  // Assuming tenantId is the primary key in the catalog table
             },
         };
 
-        // Fetch the item from DynamoDB
-        const command = new GetItemCommand(params);
-        const data = await dynamoDbClient.send(command);
+        // Fetch the tenant's table name from the catalog table
+        const catalogCommand = new GetItemCommand(catalogParams);
+        const catalogData = await dynamoDbClient.send(catalogCommand);
 
-        // Check if the item exists in DynamoDB
-        if (!data.Item) {
+        // Check if the tenant exists in the catalog
+        if (!catalogData.Item || !catalogData.Item.tableName) {
             return {
                 statusCode: 404,
                 body: JSON.stringify({
-                    message: `User with ID ${body.name} not found`,
+                    message: `Tenant with ID ${tenantId} not found in catalog`,
+                }),
+            };
+        }
+
+        const tenantTableName = catalogData.Item.tableName.S;  // Get the tenant's specific table name
+
+        // Define parameters to get the user from the tenant's specific table
+        const userParams = {
+            TableName: tenantTableName,
+            Key: {
+                id: { S: body.name },  // Assuming 'id' is the primary key in the tenant's table
+            },
+        };
+
+        // Fetch the user from the tenant's table
+        const userCommand = new GetItemCommand(userParams);
+        const userData = await dynamoDbClient.send(userCommand);
+
+        // Check if the user exists in the tenant's table
+        if (!userData.Item) {
+            return {
+                statusCode: 404,
+                body: JSON.stringify({
+                    message: `User with ID ${body.name} not found in tenant's table`,
                 }),
             };
         }
@@ -45,7 +80,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
             statusCode: 200,
             body: JSON.stringify({
                 message: `Hello, ${body.name}`,
-                userProfile: data.Item.userProfile ? data.Item.userProfile.M : {},
+                userProfile: userData.Item.userProfile ? userData.Item.userProfile.M : {},
             }),
         };
     } catch (error: any) {
@@ -54,7 +89,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
         return {
             statusCode: 500,
             body: JSON.stringify({
-                message: 'An error occurred while fetching the user from DynamoDB',
+                message: 'An error occurred while fetching the user',
                 error: error.message,
             }),
         };

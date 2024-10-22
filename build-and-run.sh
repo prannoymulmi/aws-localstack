@@ -40,24 +40,24 @@ if $FIRST_RUN; then
     userId="user-$RANDOM-$RANDOM"
     email="user$i@example.com"
 
-    # Insert into DynamoDB using awslocal
-    awslocal dynamodb put-item \
-      --table-name tenant-1-table \
-      --item "{
-          \"id\": {\"S\": \"$userId\"},
-          \"codeVerifier\": {\"S\": \"some-code-verifier-$i\"},
-          \"accessToken\": {\"S\": \"access-token-value-$i\"},
-          \"refreshToken\": {\"S\": \"refresh-token-value-$i\"},
-          \"expiresAt\": {\"N\": \"1700000000\"},
-          \"user_email\": {\"S\": \"$email\"},
-          \"userProfile\": {
-              \"M\": {
-                  \"name\": {\"S\": \"User $i\"},
-                  \"email\": {\"S\": \"$email\"}
+        # Insert into DynamoDB using awslocal
+        awslocal dynamodb put-item \
+          --table-name "tenant-$k-table" \
+          --item "{
+              \"id\": {\"S\": \"$userId\"},
+              \"codeVerifier\": {\"S\": \"some-code-verifier-$i\"},
+              \"accessToken\": {\"S\": \"access-token-value-$i\"},
+              \"refreshToken\": {\"S\": \"refresh-token-value-$i\"},
+              \"expiresAt\": {\"N\": \"1700000000\"},
+              \"user_email\": {\"S\": \"$email\"},
+              \"userProfile\": {
+                  \"M\": {
+                      \"name\": {\"S\": \"User $i\"},
+                      \"email\": {\"S\": \"$email\"}
+                  }
               }
-          }
-      }"
+          }"
 
-    echo "Inserted user with userId $userId and email $email"
-  done
+        echo "Inserted user with userId $userId and email $email in tenant-$k-table"
+      done
 fi
