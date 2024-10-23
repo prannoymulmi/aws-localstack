@@ -3,7 +3,7 @@ version: "3.8"
 services:
   localstack:
     container_name: "${LOCALSTACK_DOCKER_NAME:-localstack-main}"
-    image: localstack/localstack-pro
+    image: localstack/localstack
     network_mode: bridge  # Use host networking mode
     ports:
       - "127.0.0.1:4566:4566"            # LocalStack Gateway
@@ -13,9 +13,7 @@ services:
     environment:
       # LocalStack configuration: https://docs.localstack.cloud/references/configuration/
       - SERVICES=s3,lambda,dynamodb,iam,apigateway,
-      - LOCALSTACK_AUTH_TOKEN=${LOCAL_STACK_HOBBY_TOKEN}
       - DEBUG=1                       # Optional: Enable debug output
-      - PERSISTENCE=1
       - DATA_DIR=/tmp/localstack/data # Optional: Persist data across container restarts
       - LAMBDA_EXECUTOR=docker        # Required for Lambda functions using Docker
     volumes:

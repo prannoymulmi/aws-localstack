@@ -36,6 +36,13 @@ tf_dir="./terraform"
 if $FIRST_RUN; then
   for k in {1..2}
   do
+    awslocal dynamodb put-item \
+                --table-name "catalog-table" \
+                --item "{
+                    \"tenantId\": {\"S\": \"tenant$k\"},
+                     \"table_name\": {\"S\": \"tenant-$k-table\"}
+                }"
+    echo "Inserted tenant$k in catalog-table"
     for i in {1..10}
       do
         # Generate a random userId and email
