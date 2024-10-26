@@ -71,3 +71,29 @@ if $FIRST_RUN; then
       done
   done
 fi
+
+if $FIRST_RUN; then
+  # Host entries to add
+  HOST1="127.0.0.1 tenant1.local"
+  HOST2="127.0.0.1 tenant2.local"
+  HOSTS_FILE="/etc/hosts"
+
+  # Function to add a host entry if it doesn't exist
+  add_host_if_missing() {
+      local HOST_ENTRY="$1"
+      local HOSTS_FILE="$2"
+
+      if ! grep -qF "$HOST_ENTRY" "$HOSTS_FILE"; then
+          echo "$HOST_ENTRY" | sudo tee -a "$HOSTS_FILE" > /dev/null
+          echo "Added $HOST_ENTRY to $HOSTS_FILE"
+          sudo dscacheutil -flushcache
+          sudo killall -HUP mDNSResponder
+      else
+          echo "$HOST_ENTRY already exists in $HOSTS_FILE"
+      fi
+  }
+
+  # Add tenant1.local and tenant2.local if they are missing
+  add_host_if_missing "$HOST1" "$HOSTS_FILE"
+  add_host_if_missing "$HOST2" "$HOSTS_FILE"
+fi

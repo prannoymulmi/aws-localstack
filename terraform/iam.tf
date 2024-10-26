@@ -31,6 +31,16 @@ resource "aws_iam_role_policy_attachment" "lambda_dynamodb_policy_attachment" {
   policy_arn = aws_iam_policy.lambda_dynamodb_policy.arn
 }
 
+# Lambda permission for API Gateway
+resource "aws_lambda_permission" "api_gateway_permission" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.my_lambda.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.oidc_api.execution_arn}/*/*"
+}
+
+
 # IAM Policy for Lambda to log to CloudWatch
 resource "aws_iam_policy" "lambda_cloudwatch_policy" {
   name        = "lambda_cloudwatch_logs_policy"

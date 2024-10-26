@@ -41,8 +41,13 @@ the example where the services used here are explicitly mentioned in the [file](
 
 ### How to start localstack
 ```bash
-## Start Docker compose
+export LOCAL_STACK_HOBBY_TOKEN=<YOUR_TOKEN> # replace it with your token if you have a pro or a hobby auth token
+
+## Start Docker compose (Only if Token is there)
 docker compose up
+
+## Start Docker compose (If no token available)
+docker-compose -f docker-compose-unpaid.yml up
 
 # Builds and starts the project as Localstack community edition is not persistent
 ./build-and-run.sh
@@ -71,24 +76,27 @@ awslocal apigateway get-resources --rest-api-id loe4sp8606
 
 # To test lambda without using cli
 awslocal apigateway test-invoke-method \
-  --rest-api-id loe4sp8606 \
+  --rest-api-id 7mfo9zvvun \
   --resource-id 0dajq28nzj \
   --http-method POST \
-  --path-with-query-string "/test" \
+  --path-with-query-string "/authorize" \
   --body '{"name": "testtt"}'
 
 # Check the integration
 awslocal apigateway get-integration \
-  --rest-api-id u5wgld5kmt \
+  --rest-api-id 7mfo9zvvun \
   --resource-id u3shefvycy \
   --http-method POST
   
 # Curl to call api-gw 
-curl -v -X POST http://127.0.0.1:4566/restapis/7mfo9zvvun/dev/_user_request_/authorize \
+curl -X POST http://localhost:4566/restapis/0pkpkjheyz/dev/_user_request_/authorize \
 -H "Content-Type: application/json" \
 -H "tenant-id: tenant1" \
--d '{"name": "user-4187-5193"}'
+-d '{"name": "user-27499-12048"}'
 
+curl -X POST http://tenant1.local:4566/restapis/0pkpkjheyz/dev/_user_request_/authorize \
+-H "Content-Type: application/json" \
+-d '{"name": "user-27499-12048"}'
 
 # Logs 
 awslocal logs describe-log-streams --log-group-name "/aws/lambda/my_lambda_function"

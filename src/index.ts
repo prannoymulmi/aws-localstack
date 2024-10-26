@@ -5,13 +5,19 @@ const dynamoDbClient = new DynamoDBClient({ region: 'us-east-1' }); // Adjust th
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     try {
+        let tenantId;
+        if (event.headers["Host"]?.includes("tenant1")) {
+            tenantId = "tenant1"
+        } else if (event.headers["Host"]?.includes("tenant2")) {
+            tenantId = "tenant2"
+        }
         // Parse the tenant ID from the request headers
-        const tenantId = event.headers['tenant-id'];
         if (!tenantId) {
             return {
                 statusCode: 400,
                 body: JSON.stringify({
-                    message: "Missing 'tenant-id' in request headers",
+                    message: "Unknown 'tenant-id' in request headers",
+                    headers: event.headers
                 }),
             };
         }
@@ -70,7 +76,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
             return {
                 statusCode: 404,
                 body: JSON.stringify({
-                    message: `User with ID ${body.name} not found in tenant's table`,
+                    message: `User with ID ${body.name} not found in ${tenantId} table`,
                 }),
             };
         }
