@@ -42,7 +42,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
         const catalogData = await dynamoDbClient.send(catalogCommand);
 
         // Check if the tenant exists in the catalog
-        if (!catalogData.Item || !catalogData.Item.tableName) {
+        if (!catalogData.Item || !catalogData.Item.table_name) {
             return {
                 statusCode: 404,
                 body: JSON.stringify({
@@ -51,7 +51,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
             };
         }
 
-        const tenantTableName = catalogData.Item.tableName.S;  // Get the tenant's specific table name
+        const tenantTableName = catalogData.Item.table_name.S;  // Get the tenant's specific table name
 
         // Define parameters to get the user from the tenant's specific table
         const userParams = {
@@ -80,17 +80,17 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
             statusCode: 200,
             body: JSON.stringify({
                 message: `Hello, ${body.name}`,
-                userProfile: userData.Item.userProfile ? userData.Item.userProfile.M : {},
+                userProfile: userData.Item.userProfile ? userData.Item.userProfile : {},
             }),
         };
-    } catch (error: any) {
+    } catch (error) {
         // Handle any errors
         console.error(error);
         return {
             statusCode: 500,
             body: JSON.stringify({
                 message: 'An error occurred while fetching the user',
-                error: error.message,
+                error: error,
             }),
         };
     }

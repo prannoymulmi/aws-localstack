@@ -36,7 +36,7 @@ resource "aws_lambda_function" "my_lambda" {
 
   environment {
     variables = {
-      ENV_VAR = "value"
+      LOG_LEVEL = "DEBUG"
     }
   }
 }
@@ -47,4 +47,10 @@ resource "aws_lambda_alias" "my_lambda_alias" {
   description      = "Development alias"
   function_name    = aws_lambda_function.my_lambda.function_name
   function_version = aws_lambda_function.my_lambda.version
+}
+
+# CloudWatch Log Group for Lambda logs
+resource "aws_cloudwatch_log_group" "lambda_log_group" {
+  name              = "/aws/lambda/my_lambda_function"
+  retention_in_days = 7
 }
