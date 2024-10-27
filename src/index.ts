@@ -1,16 +1,12 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { DynamoDBClient, GetItemCommand } from '@aws-sdk/client-dynamodb';
+import {getTenant} from "./utils/getTenant";
 
 const dynamoDbClient = new DynamoDBClient({ region: 'us-east-1' }); // Adjust the region as needed
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     try {
-        let tenantId;
-        if (event.headers["Host"]?.includes("tenant1")) {
-            tenantId = "tenant1"
-        } else if (event.headers["Host"]?.includes("tenant2")) {
-            tenantId = "tenant2"
-        }
+        const tenantId= getTenant(event);
         // Parse the tenant ID from the request headers
         if (!tenantId) {
             return {
