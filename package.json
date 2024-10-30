@@ -10,6 +10,7 @@
     "deploy": "npx tsc --project ./tsconfig.json && zip -r dist/lambda_function.zip dist node_modules"
   },
   "dependencies": {
+    "uuidv4": "^6.2.13",
     "winston": "^3.15.0",
     "winston-cloudwatch": "^6.3.0"
   },

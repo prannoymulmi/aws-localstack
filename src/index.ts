@@ -2,6 +2,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { DynamoDBClient, GetItemCommand } from '@aws-sdk/client-dynamodb';
 import {getTenant} from "./utils/getTenant";
 import {validateUserCredentials} from "./utils/validateUserCredentials";
+import { v4 as uuidv4 } from 'uuid';
 
 const dynamoDbClient = new DynamoDBClient({ region: 'us-east-1' }); // Adjust the region as needed
 
@@ -69,7 +70,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
             };
         }
 
-        const authorizationCode =" uuidv4()";
+        const authorizationCode = uuidv4();
         const expiresAt = Math.floor(Date.now() / 1000) + 600; // Code expires in 10 minutes
 
         /*const putItemParams = {
