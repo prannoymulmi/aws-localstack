@@ -59,6 +59,7 @@ if $FIRST_RUN; then
               \"refreshToken\": {\"S\": \"refresh-token-value-$i\"},
               \"expiresAt\": {\"N\": \"1700000000\"},
               \"user_email\": {\"S\": \"$email\"},
+              \"password\": {\"S\": \"test$k\"},
               \"userProfile\": {
                   \"M\": {
                       \"name\": {\"S\": \"User $i\"},

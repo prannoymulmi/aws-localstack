@@ -1,6 +1,7 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { DynamoDBClient, GetItemCommand } from '@aws-sdk/client-dynamodb';
 import {getTenant} from "./utils/getTenant";
+import {validateUserCredentials} from "./utils/validateUserCredentials";
 
 const dynamoDbClient = new DynamoDBClient({ region: 'us-east-1' }); // Adjust the region as needed
 
@@ -22,11 +23,13 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
         let body = JSON.parse(event.body ? event.body : '{}');
 
         // Validate input
-        if (!body.name) {
+        const { username, password, codeVerifier } = body;
+
+        if (!username || !password || !codeVerifier) {
             return {
                 statusCode: 400,
                 body: JSON.stringify({
-                    message: "Missing 'name' in request body",
+                    message: "Missing 'username', 'password', or 'codeVerifier' in request body",
                 }),
             };
         }
@@ -53,36 +56,38 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
             };
         }
 
-        const tenantTableName = catalogData.Item.table_name.S;  // Get the tenant's specific table name
+        const tenantTableName = catalogData.Item.table_name.S ? catalogData.Item.table_name.S : "";  // Get the tenant's specific table name
 
-        // Define parameters to get the user from the tenant's specific table
-        const userParams = {
-            TableName: tenantTableName,
-            Key: {
-                id: { S: body.name },  // Assuming 'id' is the primary key in the tenant's table
-            },
-        };
 
-        // Fetch the user from the tenant's table
-        const userCommand = new GetItemCommand(userParams);
-        const userData = await dynamoDbClient.send(userCommand);
-
-        // Check if the user exists in the tenant's table
-        if (!userData.Item) {
+        const isValidUser = await validateUserCredentials(username, password, tenantTableName);
+        if (!isValidUser) {
             return {
-                statusCode: 404,
+                statusCode: 401,
                 body: JSON.stringify({
-                    message: `User with ID ${body.name} not found in ${tenantId} table`,
+                    message: "Invalid username or password",
                 }),
             };
         }
 
+        const authorizationCode =" uuidv4()";
+        const expiresAt = Math.floor(Date.now() / 1000) + 600; // Code expires in 10 minutes
+
+        /*const putItemParams = {
+            TableName: 'authorization-codes-table', // Replace with your DynamoDB table name
+            Item: {
+                authorizationCode: { S: authorizationCode },
+                codeVerifier: { S: codeVerifier },
+                username: { S: username },
+                expiresAt: { N: expiresAt.toString() },
+            },
+        };*/
         // Return the item fetched from DynamoDB
         return {
             statusCode: 200,
             body: JSON.stringify({
-                message: `Hello, ${body.name}`,
-                userProfile: userData.Item.userProfile ? userData.Item.userProfile : {},
+                message: `Hello, ${body.username}`,
+                authorizationCode: { S: authorizationCode },
+                expiresAt: { N: expiresAt.toString() },
             }),
         };
     } catch (error) {

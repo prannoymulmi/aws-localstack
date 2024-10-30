@@ -7,9 +7,12 @@
   "license": "MIT",
   "scripts": {
     "build": "./node_modules/.bin/tsc",
-    "deploy": "npx tsc --project ./tsconfig.json && zip -r dist/lambda_function.zip dist"
+    "deploy": "npx tsc --project ./tsconfig.json && zip -r dist/lambda_function.zip dist node_modules"
   },
-  "dependencies": {},
+  "dependencies": {
+    "winston": "^3.15.0",
+    "winston-cloudwatch": "^6.3.0"
+  },
   "devDependencies": {
     "@aws-sdk/client-dynamodb": "^3.675.0",
     "@types/aws-lambda": "^8.10.145",

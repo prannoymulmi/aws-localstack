@@ -72,11 +72,11 @@ awslocal lambda invoke --function-name lambda-function \
 awslocal apigateway get-rest-apis
 
 # Get resources assoiated with api-ge    
-awslocal apigateway get-resources --rest-api-id loe4sp8606
+awslocal apigateway get-resources --rest-api-id qz0of05uku
 
 # To test lambda without using cli
 awslocal apigateway test-invoke-method \
-  --rest-api-id 7mfo9zvvun \
+  --rest-api-id qz0of05uku \
   --resource-id 0dajq28nzj \
   --http-method POST \
   --path-with-query-string "/authorize" \
@@ -89,14 +89,14 @@ awslocal apigateway get-integration \
   --http-method POST
   
 # Curl to call api-gw 
-curl -X POST http://localhost:4566/restapis/0pkpkjheyz/dev/_user_request_/authorize \
+curl -X POST http://localhost:4566/restapis/qz0of05uku/dev/_user_request_/authorize \
 -H "Content-Type: application/json" \
 -H "tenant-id: tenant1" \
--d '{"name": "user-27499-12048"}'
+-d '{"username": "user-5291-8168", "password": "test1", "codeVerifier": "codeVerifier"}'
 
-curl -X POST http://tenant1.local:4566/restapis/0pkpkjheyz/dev/_user_request_/authorize \
+curl -X POST http://tenant1.local:4566/restapis/qz0of05uku/dev/_user_request_/authorize \
 -H "Content-Type: application/json" \
--d '{"name": "user-27499-12048"}'
+-d '{"username": "user7@example.com", "password": "test1", "codeVerifier": "codeVerifier"}'
 
 # Logs 
 awslocal logs describe-log-streams --log-group-name "/aws/lambda/my_lambda_function"
