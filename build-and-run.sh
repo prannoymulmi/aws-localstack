@@ -2,6 +2,14 @@
 
 BUCKET_NAME="state-bucket"
 FIRST_RUN=true  # Set FIRST_RUN as a boolean (without quotes)
+VOLUME_DIR="./volume"
+
+if [ ! -d "$VOLUME_DIR" ]; then
+  mkdir -p "$VOLUME_DIR"
+  echo "Directory '$VOLUME_DIR' created."
+else
+  echo "Directory '$VOLUME_DIR' already exists."
+fi
 
 # Check if the bucket exists
 if ! awslocal s3api head-bucket --bucket "$BUCKET_NAME" 2>/dev/null; then
@@ -73,6 +81,7 @@ if $FIRST_RUN; then
   done
 fi
 
+# Add tenant domain into local hosts file
 if $FIRST_RUN; then
   # Host entries to add
   HOST1="127.0.0.1 tenant1.local"

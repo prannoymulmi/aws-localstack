@@ -1,5 +1,5 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import { DynamoDBClient, GetItemCommand } from '@aws-sdk/client-dynamodb';
+import {DynamoDBClient, GetItemCommand, QueryCommand, UpdateItemCommand} from '@aws-sdk/client-dynamodb';
 import {getTenant} from "./utils/getTenant";
 import {validateUserCredentials} from "./utils/validateUserCredentials";
 import { v4 as uuidv4 } from 'uuid';
@@ -60,7 +60,21 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
         const tenantTableName = catalogData.Item.table_name.S ? catalogData.Item.table_name.S : "";  // Get the tenant's specific table name
 
 
-        const isValidUser = await validateUserCredentials(username, password, tenantTableName);
+        // Define parameters to query the user by user_email using the GSI
+        const userParams = {
+            TableName: tenantTableName,
+            IndexName: 'user_email_index', // Name of the GSI
+            KeyConditionExpression: 'user_email = :username',
+            ExpressionAttributeValues: {
+                ':username': {S: username},
+            },
+        };
+
+        // Query the user from the tenant's table using the GSI
+        const userCommand = new QueryCommand(userParams);
+        const userData = await dynamoDbClient.send(userCommand);
+
+        const isValidUser = await validateUserCredentials(username, password, userData);
         if (!isValidUser) {
             return {
                 statusCode: 401,
@@ -73,15 +87,27 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
         const authorizationCode = uuidv4();
         const expiresAt = Math.floor(Date.now() / 1000) + 600; // Code expires in 10 minutes
 
-        /*const putItemParams = {
-            TableName: 'authorization-codes-table', // Replace with your DynamoDB table name
-            Item: {
-                authorizationCode: { S: authorizationCode },
-                codeVerifier: { S: codeVerifier },
-                username: { S: username },
-                expiresAt: { N: expiresAt.toString() },
+
+        const updateItemParams = {
+            TableName: tenantTableName,
+            Key: {
+                // @ts-ignore
+                id: { S: userData.Items[0].id.S! },
             },
-        };*/
+            UpdateExpression: 'SET userAccess = :userAccess',
+            ExpressionAttributeValues: {
+                ':userAccess': {
+                    M: {
+                        authorizationCode: { S: authorizationCode },
+                        codeVerifier: { S: codeVerifier },
+                        expiresAt: { N: expiresAt.toString() },
+                    },
+                },
+            },
+        };
+
+        const updateItemCommand = new UpdateItemCommand(updateItemParams);
+        await dynamoDbClient.send(updateItemCommand);
         // Return the item fetched from DynamoDB
         return {
             statusCode: 200,
