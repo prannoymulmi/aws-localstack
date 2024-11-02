@@ -7,9 +7,13 @@
   "license": "MIT",
   "scripts": {
     "build": "./node_modules/.bin/tsc",
-    "deploy": "npx tsc --project ./tsconfig.json && zip -r dist/lambda_function.zip dist node_modules"
+    "build:zip": "npm run build && npx tsc --project ./tsconfig.json && zip -r dist/lambda_function.zip dist node_modules",
+    "clean": "rm -rf dist && rm -rf node_modules && rm -rf deployment",
+    "build:esbuild": "node build.mjs",
+    "deploy": "npm run build:zip && npm run build:esbuild"
   },
   "dependencies": {
+    "esbuild": "^0.24.0",
     "uuidv4": "^6.2.13",
     "winston": "^3.15.0",
     "winston-cloudwatch": "^6.3.0"

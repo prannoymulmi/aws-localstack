@@ -3,14 +3,14 @@
 resource "aws_iam_role" "lambda_role" {
   name = "lambda-execution-role"
   assume_role_policy = jsonencode({
-    "Version": "2012-10-17",
-    "Statement": [
+    "Version" : "2012-10-17",
+    "Statement" : [
       {
-        "Action": "sts:AssumeRole",
-        "Principal": {
-          "Service": "lambda.amazonaws.com"
+        "Action" : "sts:AssumeRole",
+        "Principal" : {
+          "Service" : "lambda.amazonaws.com"
         },
-        "Effect": "Allow"
+        "Effect" : "Allow"
       }
     ]
   })
@@ -30,7 +30,7 @@ resource "aws_lambda_function" "my_lambda" {
   runtime       = "nodejs18.x"
 
   # Reference the ZIP file
-  filename      = "${path.module}/../dist/lambda_function.zip"
+  filename = "${path.module}/../dist/lambda_function.zip"
 
   source_code_hash = filebase64sha256("${path.module}/../dist/lambda_function.zip")
 
@@ -53,4 +53,14 @@ resource "aws_lambda_alias" "my_lambda_alias" {
 resource "aws_cloudwatch_log_group" "lambda_log_group" {
   name              = "/aws/lambda/my_lambda_function"
   retention_in_days = 7
+}
+
+module "test_lambda" {
+  source = "./module/lambda"
+  lambda_function_name = "test"
+  source_dir = "deployment/test"
+  policies = [
+    aws_iam_policy.lambda_dynamodb_policy.arn,
+    aws_iam_policy.lambda_cloudwatch_policy.arn
+  ]
 }

@@ -1,7 +1,7 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import {DynamoDBClient, GetItemCommand, QueryCommand, UpdateItemCommand} from '@aws-sdk/client-dynamodb';
-import {getTenant} from "./utils/getTenant";
-import {validateUserCredentials} from "./utils/validateUserCredentials";
+import {getTenant} from "../utils/getTenant";
+import {validateUserCredentials} from "../utils/validateUserCredentials";
 import { v4 as uuidv4 } from 'uuid';
 
 const dynamoDbClient = new DynamoDBClient({ region: 'us-east-1' }); // Adjust the region as needed

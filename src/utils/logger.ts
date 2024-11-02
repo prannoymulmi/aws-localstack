@@ -2,7 +2,7 @@ import { createLogger, format, transports } from 'winston';
 import WinstonCloudWatch from 'winston-cloudwatch';
 
 const logger = createLogger({
-    level: 'info',
+    level: process.env.LOG_LEVEL || 'info',
     format: format.combine(
         format.timestamp(),
         format.printf(({ timestamp, level, message }) => `${timestamp} ${level}: ${message}`)

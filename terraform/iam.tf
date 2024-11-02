@@ -14,7 +14,7 @@ resource "aws_iam_policy" "lambda_dynamodb_policy" {
           "dynamodb:Query",
           "dynamodb:Scan"
         ],
-        Effect   = "Allow",
+        Effect = "Allow",
         Resource = [
           aws_dynamodb_table.tenant_1.arn,
           aws_dynamodb_table.tenant_2.arn,
@@ -50,8 +50,8 @@ resource "aws_iam_policy" "lambda_cloudwatch_policy" {
     Version = "2012-10-17",
     Statement = [
       {
-        Effect   = "Allow",
-        Action   = [
+        Effect = "Allow",
+        Action = [
           "logs:CreateLogGroup",
           "logs:CreateLogStream",
           "logs:*"
