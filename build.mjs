@@ -1,5 +1,6 @@
 import * as esbuild from "esbuild";
 import fs from "fs";
+//import { execSync } from "child_process";
 
 const Reset = "\x1b[0m";
 const FgBlue = "\x1b[34m";
@@ -26,7 +27,11 @@ for (const lambdaInfo of lambdas) {
         external: [
             "@aws-sdk/client-cloudwatch-logs",
         ],
+        minify: true,
     });
+    // Copy node_modules to the deployment directory
+   /* const nodeModulesPath = `deployment/${lambdaInfo.name}/node_modules`;
+    execSync(`cp -r node_modules ${nodeModulesPath}`);*/
     const stats = fs.statSync(outputPath);
     console.log(
         ` - Build lambda ${FgBlue}${lambdaInfo.name}${Reset} (${new Intl.NumberFormat("en").format(stats.size / (1024 * 1024))} MiB)`,

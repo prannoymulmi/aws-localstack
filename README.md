@@ -54,9 +54,16 @@ docker-compose -f docker-compose-unpaid.yml up
 
 # invokes Lambda directly
 awslocal lambda invoke --function-name lambda-function \
+   --headers '{"Host": "tenant1.local"}' \
     --payload '{"body": "{\"name\": \"User\"}" }' output.txt
     
-    
+
+awslocal lambda invoke --function-name test \
+    --payload '{"body": "{\"name\": \"User\"}"}' output.txt \
+    --headers '{"Host": "tenant1.local"}'
+awslocal lambda invoke --function-name lambda-function \
+    --payload '{"username": "user7@example.com", "password": "test1", "codeVerifier": "codeVerifier"}' output.txt
+        
  #Print log
 awslocal lambda invoke --function-name lambda-function \
     --payload '{"body": "{\"name\": \"User\"}" }' \
