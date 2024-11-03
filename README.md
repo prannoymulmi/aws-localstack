@@ -54,9 +54,16 @@ docker-compose -f docker-compose-unpaid.yml up
 
 # invokes Lambda directly
 awslocal lambda invoke --function-name lambda-function \
+   --headers '{"Host": "tenant1.local"}' \
     --payload '{"body": "{\"name\": \"User\"}" }' output.txt
     
-    
+
+awslocal lambda invoke --function-name test \
+    --payload '{"body": "{\"name\": \"User\"}"}' output.txt \
+    --headers '{"Host": "tenant1.local"}'
+awslocal lambda invoke --function-name lambda-function \
+    --payload '{"username": "user7@example.com", "password": "test1", "codeVerifier": "codeVerifier"}' output.txt
+        
  #Print log
 awslocal lambda invoke --function-name lambda-function \
     --payload '{"body": "{\"name\": \"User\"}" }' \
@@ -65,18 +72,18 @@ awslocal lambda invoke --function-name lambda-function \
 
 ### How to call end point in API-GW
 
-``` bash
+```bash
 
 # Helpful commands: 
 # Get API all APIS   
 awslocal apigateway get-rest-apis
 
 # Get resources assoiated with api-ge    
-awslocal apigateway get-resources --rest-api-id 6uwjfu1trk
+awslocal apigateway get-resources --rest-api-id o6mwkkwazm
 
 # To test lambda without using cli
 awslocal apigateway test-invoke-method \
-  --rest-api-id 6uwjfu1trk \
+  --rest-api-id o6mwkkwazm \
   --resource-id 0dajq28nzj \
   --http-method POST \
   --path-with-query-string "/authorize" \
@@ -84,17 +91,17 @@ awslocal apigateway test-invoke-method \
 
 # Check the integration
 awslocal apigateway get-integration \
-  --rest-api-id 6uwjfu1trk \
+  --rest-api-id o6mwkkwazm \
   --resource-id u3shefvycy \
   --http-method POST
   
 # Curl to call api-gw 
-curl -X POST http://localhost:4566/restapis/6uwjfu1trk/dev/_user_request_/authorize \
+curl -X POST http://localhost:4566/restapis/o6mwkkwazm/dev/_user_request_/authorize \
 -H "Content-Type: application/json" \
 -H "tenant-id: tenant1" \
 -d '{"username": "user-5291-8168", "password": "test1", "codeVerifier": "codeVerifier"}'
 
-curl -X POST http://tenant1.local:4566/restapis/6uwjfu1trk/dev/_user_request_/authorize \
+curl -X POST http://tenant1.local:4566/restapis/o6mwkkwazm/dev/_user_request_/authorize \
 -H "Content-Type: application/json" \
 -d '{"username": "user7@example.com", "password": "test1", "codeVerifier": "codeVerifier"}'
 

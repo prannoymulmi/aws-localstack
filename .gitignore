@@ -6,6 +6,7 @@
 # Built lambda functions
 */function.zip
 dist
+deployment
 
 */.terraform.lock.hcl
 */.terraform

@@ -7,8 +7,6 @@ VOLUME_DIR="./volume"
 if [ ! -d "$VOLUME_DIR" ]; then
   mkdir -p "$VOLUME_DIR"
   echo "Directory '$VOLUME_DIR' created."
-else
-  echo "Directory '$VOLUME_DIR' already exists."
 fi
 
 # Check if the bucket exists
@@ -22,10 +20,9 @@ else
     FIRST_RUN=false  # Update the boolean
 fi
 
-rm -rf node_modules
-rm -rf dist
+yarn clean
 yarn install
-yarn build
+#yarn build
 yarn deploy
 
 # Define the target directory

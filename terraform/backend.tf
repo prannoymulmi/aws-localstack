@@ -1,12 +1,22 @@
 # main.tf
 terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.73"
+    }
+    archive = {
+      source  = "hashicorp/archive"
+      version = "2.6.0"
+    }
+  }
   backend "s3" {
-    bucket = "state-bucket"
-    key    = "terraform.tfstate"
-    region = "us-east-1"
-    endpoint = "http://localhost:4566"  # LocalStack S3 endpoint
-    access_key = "test"                 # Default LocalStack access key
-    secret_key = "test"                 # Default LocalStack secret key
+    bucket           = "state-bucket"
+    key              = "terraform.tfstate"
+    region           = "us-east-1"
+    endpoint         = "http://localhost:4566" # LocalStack S3 endpoint
+    access_key       = "test"                  # Default LocalStack access key
+    secret_key       = "test"                  # Default LocalStack secret key
     force_path_style = true
   }
 }
