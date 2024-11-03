@@ -35,6 +35,15 @@ resource "aws_lambda_permission" "pkce_authorize_lambda_apigw" {
   source_arn    = "${aws_api_gateway_rest_api.oidc_api.execution_arn}/*/*"
 }
 
+# Lambda permission for API Gateway
+resource "aws_lambda_permission" "pkce_token_lambda_apigw" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = module.pkce_token_lambda.aws_lambda_function.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.oidc_api.execution_arn}/*/*"
+}
+
 
 # IAM Policy for Lambda to log to CloudWatch
 resource "aws_iam_policy" "lambda_cloudwatch_policy" {

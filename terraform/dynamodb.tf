@@ -33,6 +33,12 @@ resource "aws_dynamodb_table" "tenant_1" {
     projection_type = "ALL"
   }
 
+  global_secondary_index {
+    name            = "auth_code_index"
+    hash_key        = "user_email"
+    projection_type = "ALL"
+  }
+
   tags = {
     Name        = "tenant_1"
     Environment = "dev"

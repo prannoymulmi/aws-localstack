@@ -18,6 +18,20 @@ paths:
         type: aws_proxy
         requestParameters:
           integration.request.header.tenant-header: method.request.header.origin
+  /token:
+      post:
+        summary: Invoke Lambda function
+        operationId: invokeLambda token
+        responses:
+          '200':
+            description: Successful response
+        x-amazon-apigateway-integration:
+          uri: ${lambda_invoke_arn_token}
+          passthroughBehavior: when_no_match
+          httpMethod: POST
+          type: aws_proxy
+          requestParameters:
+            integration.request.header.tenant-header: method.request.header.origin
 components:
   securitySchemes:
     none:

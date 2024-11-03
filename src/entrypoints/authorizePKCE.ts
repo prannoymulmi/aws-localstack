@@ -3,6 +3,8 @@ import {DynamoDBClient, GetItemCommand, QueryCommand, UpdateItemCommand} from '@
 import {getTenant} from "../utils/getTenant";
 import {validateUserCredentials} from "../utils/validateUserCredentials";
 import { v4 as uuidv4 } from 'uuid';
+import {getCatalogData} from "../utils/getCatalogData";
+import {getUserData} from "../utils/getUserData";
 
 const dynamoDbClient = new DynamoDBClient({ region: 'us-east-1' }); // Adjust the region as needed
 
@@ -35,17 +37,8 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
             };
         }
 
-        // Define parameters to get tenant's table name from the catalog DynamoDB table
-        const catalogParams = {
-            TableName: 'catalog-table',  // Replace with your catalog DynamoDB table name
-            Key: {
-                tenantId: { S: tenantId },  // Assuming tenantId is the primary key in the catalog table
-            },
-        };
 
-        // Fetch the tenant's table name from the catalog table
-        const catalogCommand = new GetItemCommand(catalogParams);
-        const catalogData = await dynamoDbClient.send(catalogCommand);
+        const catalogData = await getCatalogData(tenantId);
 
         // Check if the tenant exists in the catalog
         if (!catalogData.Item || !catalogData.Item.table_name) {
@@ -59,20 +52,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
 
         const tenantTableName = catalogData.Item.table_name.S ? catalogData.Item.table_name.S : "";  // Get the tenant's specific table name
 
-
-        // Define parameters to query the user by user_email using the GSI
-        const userParams = {
-            TableName: tenantTableName,
-            IndexName: 'user_email_index', // Name of the GSI
-            KeyConditionExpression: 'user_email = :username',
-            ExpressionAttributeValues: {
-                ':username': {S: username},
-            },
-        };
-
-        // Query the user from the tenant's table using the GSI
-        const userCommand = new QueryCommand(userParams);
-        const userData = await dynamoDbClient.send(userCommand);
+        const userData = await getUserData(tenantTableName, username);
 
         const isValidUser = await validateUserCredentials(username, password, userData);
         if (!isValidUser) {
