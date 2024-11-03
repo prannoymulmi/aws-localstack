@@ -5,8 +5,6 @@ import {
 
 export const validateUserCredentials = async (username: string, password: string, userData: QueryCommandOutput): Promise<boolean> => {
     try {
-
-
         console.log(`User data: ${JSON.stringify(userData)}`);
         // Check if the user exists in the tenant's table
         if (!userData.Items || userData.Items.length === 0) {

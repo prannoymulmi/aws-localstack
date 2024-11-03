@@ -25,17 +25,12 @@ resource "aws_iam_policy" "lambda_dynamodb_policy" {
   })
 }
 
-# Attach policy to IAM role
-resource "aws_iam_role_policy_attachment" "lambda_dynamodb_policy_attachment" {
-  role       = aws_iam_role.lambda_role.name
-  policy_arn = aws_iam_policy.lambda_dynamodb_policy.arn
-}
 
 # Lambda permission for API Gateway
-resource "aws_lambda_permission" "api_gateway_permission" {
+resource "aws_lambda_permission" "pkce_authorize_lambda_apigw" {
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.my_lambda.function_name
+  function_name = module.pkce_authorize_lambda.aws_lambda_function.function_name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_api_gateway_rest_api.oidc_api.execution_arn}/*/*"
 }
@@ -60,10 +55,4 @@ resource "aws_iam_policy" "lambda_cloudwatch_policy" {
       }
     ]
   })
-}
-
-# Attach the policy to the Lambda IAM role
-resource "aws_iam_role_policy_attachment" "lambda_logs_attach" {
-  role       = aws_iam_role.lambda_role.name
-  policy_arn = aws_iam_policy.lambda_cloudwatch_policy.arn
 }

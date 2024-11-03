@@ -17,7 +17,11 @@ resource "aws_iam_role" "_" {
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_policy_attachments" {
-  for_each   = toset(var.policies)
+  for_each   = local.policy_map
   role       = aws_iam_role._.name
   policy_arn = each.value
+}
+
+locals {
+  policy_map = { for idx, policy in var.policies : idx => policy }
 }
