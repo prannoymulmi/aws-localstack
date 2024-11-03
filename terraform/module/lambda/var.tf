@@ -4,9 +4,9 @@ variable "lambda_function_name" {
 }
 
 variable "policies" {
-  type        =  list(string)
+  type        = list(string)
   description = "A map of IAM policies to attach to the Lambda role"
-  default = []
+  default     = []
 
 }
 

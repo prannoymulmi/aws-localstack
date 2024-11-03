@@ -10,6 +10,8 @@
     "build:zip": "npm run build && npx tsc --project ./tsconfig.json && zip -r dist/lambda_function.zip dist node_modules",
     "clean": "rm -rf dist && rm -rf node_modules && rm -rf deployment",
     "build:esbuild": "node build.mjs",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
     "deploy": "npm run build:zip && npm run build:esbuild"
   },
   "dependencies": {

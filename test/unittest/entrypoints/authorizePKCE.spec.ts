@@ -1,16 +1,16 @@
 import { APIGatewayProxyEvent } from 'aws-lambda';
-import { handler } from "../../src/entrypoints/authorizePKCE";
-import { getTenant } from '../../src/utils/getTenant';
-import { validateUserCredentials } from '../../src/utils/validateUserCredentials';
-import { getCatalogData } from '../../src/utils/getCatalogData';
+import { handler } from "../../../src/entrypoints/authorizePKCE";
+import { getTenant } from '../../../src/utils/getTenant';
+import { validateUserCredentials } from '../../../src/utils/validateUserCredentials';
+import { getCatalogData } from '../../../src/utils/getCatalogData';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { v4 as uuidv4 } from 'uuid';
-import {getUserData} from "../../src/utils/getUserData";
+import {getUserData} from "../../../src/utils/getUserData";
 
-jest.mock('../../src/utils/getTenant');
-jest.mock('../../src/utils/validateUserCredentials');
-jest.mock('../../src/utils/getCatalogData');
-jest.mock('../../src/utils/getUserData');
+jest.mock('../../../src/utils/getTenant');
+jest.mock('../../../src/utils/validateUserCredentials');
+jest.mock('../../../src/utils/getCatalogData');
+jest.mock('../../../src/utils/getUserData');
 jest.mock('@aws-sdk/client-dynamodb');
 jest.mock('uuid');
 

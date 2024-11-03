@@ -1,5 +1,5 @@
 output "aws_lambda_function" {
-  value = aws_lambda_function._
+  value       = aws_lambda_function._
   description = "AWS Lambda function"
 }
 
