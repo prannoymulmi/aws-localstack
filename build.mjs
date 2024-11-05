@@ -24,6 +24,9 @@ for (const lambdaInfo of lambdas) {
         bundle: true,
         platform: "node",
         outfile: outputPath,
+        loader: {
+            '.wasm': 'file',
+        },
         external: [
             "@aws-sdk/client-cloudwatch-logs",
         ],

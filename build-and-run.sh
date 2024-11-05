@@ -3,6 +3,24 @@
 BUCKET_NAME="state-bucket"
 FIRST_RUN=true  # Set FIRST_RUN as a boolean (without quotes)
 VOLUME_DIR="./volume"
+RUN_ALL=false
+RUN_DB=false
+
+# Check for --run-all flag
+for arg in "$@"; do
+  if [ "$arg" == "--run-all" ]; then
+    RUN_ALL=true
+    break
+  fi
+done
+
+# Check for --run-all flag
+for arg in "$@"; do
+  if [ "$arg" == "--run-db" ]; then
+    RUN_DB=true
+    break
+  fi
+done
 
 if [ ! -d "$VOLUME_DIR" ]; then
   mkdir -p "$VOLUME_DIR"
@@ -29,16 +47,29 @@ yarn deploy
 tf_dir="./terraform"
 
 # Run commands inside the target directory without changing the current directory
-(
-  cd "$tf_dir" || exit
-  pwd
-  rm -rf .terraform
-  tflocal init
-  tflocal apply -auto-approve
-)
-
+if ! $RUN_DB; then
+  (
+    cd "$tf_dir" || exit
+    pwd
+    rm -rf .terraform
+    tflocal init
+    tflocal apply -auto-approve
+  )
+fi
 # Check if it's the first run
-if $FIRST_RUN; then
+if $FIRST_RUN || $RUN_ALL || $RUN_DB; then
+  # Add this at the top of your script to import the argon2 library
+  node -e "require('argon2');"
+
+  # Function to hash passwords using Argon2id
+  hash_password() {
+    local PASSWORD="$1"
+    node -e "
+      const argon2 = require('argon2');
+      argon2.hash('$PASSWORD', { type: argon2.argon2id }).then(hash => console.log(hash)).catch(err => console.error(err));
+    "
+  }
+
   for k in {1..2}
   do
     awslocal dynamodb put-item \
@@ -53,6 +84,8 @@ if $FIRST_RUN; then
         # Generate a random userId and email
         userId="user-$RANDOM-$RANDOM"
         email="user$i@example.com"
+        password="test$k"
+        hashed_password=$(hash_password "$password")
 
         # Insert into DynamoDB using awslocal
         awslocal dynamodb put-item \
@@ -64,7 +97,7 @@ if $FIRST_RUN; then
               \"refreshToken\": {\"S\": \"refresh-token-value-$i\"},
               \"expiresAt\": {\"N\": \"1700000000\"},
               \"user_email\": {\"S\": \"$email\"},
-              \"password\": {\"S\": \"test$k\"},
+              \"password\": {\"S\": \"$hashed_password\"},
               \"userProfile\": {
                   \"M\": {
                       \"name\": {\"S\": \"User $i\"},

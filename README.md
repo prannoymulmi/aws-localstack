@@ -52,6 +52,12 @@ docker-compose -f docker-compose-unpaid.yml up
 # Builds and starts the project as Localstack community edition is not persistent
 ./build-and-run.sh
 
+# Build and run th project with db script and terraform
+./build-and-run.sh --run-all
+
+# Build and run the project with only DB seeding
+./build-and-run.sh --run-db
+
 # invokes Lambda directly
 awslocal lambda invoke --function-name lambda-function \
    --headers '{"Host": "tenant1.local"}' \
@@ -117,7 +123,20 @@ awslocal logs get-log-events --log-group-name "/aws/lambda/my_lambda_function" -
 # Note:In AWS API Gateway: The actual URL structure in a real API Gateway doesn't contain _user_request_. However, when you interact with API Gateway through LocalStack, _user_request_ is a placeholder that LocalStack uses to differentiate between management APIs (like defining resources) and actual user requests (interacting with your API).
 
 ```
+## Testing
 
+### Unit testing
+
+The two lambdas are tested using jest. The tests are written in the `test/unitest` folder. The tests are run using the following command:
+
+```bash
+# to run the all the Jest tests
+yarn test 
+
+# to run the all the Jest tests with coverage
+yarn test:coverage
+
+```
 ### DynamoDB
 
 ```bash

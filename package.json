@@ -15,7 +15,9 @@
     "deploy": "npm run build:zip && npm run build:esbuild"
   },
   "dependencies": {
+    "argon2": "^0.41.1",
     "esbuild": "^0.24.0",
+    "hash-wasm": "^4.11.0",
     "jsonwebtoken": "^9.0.2",
     "uuidv4": "^6.2.13",
     "winston": "^3.15.0",

@@ -16,6 +16,7 @@ resource "aws_lambda_function" "_" {
   role          = aws_iam_role._.arn
   handler       = "deployment/lambda.handler"
   runtime       = "nodejs18.x"
+  timeout       = 900  # Set timeout to 15 minutes
 
   # Reference the ZIP file
   filename = "${path.module}/../../../deployment/${var.lambda_function_name}/${var.lambda_function_name}.zip"
