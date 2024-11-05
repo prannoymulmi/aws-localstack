@@ -11,7 +11,10 @@ export const validateUserCredentials = async (username: string, password: string
             return false; // User not found
         }
 
-        const storedPassword = userData.Items[0].password.S ? userData.Items[0].password.S : "";  // Get the stored password
+        const storedPassword = userData.Items[0].password.S ? userData.Items[0].password.S : "";// Get the stored password
+        if(!storedPassword) {
+            return false;
+        }
         return await argon2Verify({ password: password, hash: storedPassword });
     } catch (error) {
         console.error('Error validating user credentials:', error);
