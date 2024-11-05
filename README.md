@@ -114,7 +114,7 @@ curl -X POST http://tenant1.local:4566/restapis/o6mwkkwazm/dev/_user_request_/au
 
 curl -X POST http://tenant1.local:4566/restapis/o6mwkkwazm/dev/_user_request_/token \
 -H "Content-Type: application/json" \
--d '{"username": "user7@example.com", "authorizationCode": "464cf866-64da-4f71-a395-aa8eca31d932", "codeVerifier": "codeVerifier"}'
+-d '{"username": "user7@example.com", "authorizationCode": "5bfa5cd1-02ec-46ca-b9ed-39fb477eb104", "codeVerifier": "codeVerifier"}'
 
 # Logs 
 awslocal logs describe-log-streams --log-group-name "/aws/lambda/my_lambda_function"

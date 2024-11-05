@@ -50,12 +50,11 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
 
         const data = await getUserData(tenantTableName, username);
 
-        // @ts-ignore
-        console.log(JSON.stringify(data.Items[0].userAccess, null, 2));
+
 
         // Check if the authorization code is valid
         // @ts-ignore
-        if (!data.Items || data.Items[0].userAccess.M.codeVerifier.S !== codeVerifier || data.Items[0].userAccess.M.authorizationCode.S !== authorizationCode) {
+        if (!data.Items || data.Items[0].userAccess.M.codeVerifier.S !== codeVerifier || data.Items[0].userAccess.M.authorizationCode.S !== authorizationCode || parseInt(data.Items[0].userAccess.M.expiresAt.N) < Math.floor(Date.now() / 1000)) {
             return {
                 statusCode: 401,
                 body: JSON.stringify({

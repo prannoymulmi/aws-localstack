@@ -75,7 +75,7 @@ describe('tokenPKCE handler', () => {
     it('should return 200 and a token if everything is valid', async () => {
         (getTenant as jest.Mock).mockReturnValue('tenant-id');
         (getCatalogData as jest.Mock).mockResolvedValue({ Item: { table_name: { S: 'table-name' } } });
-        (getUserData as jest.Mock).mockResolvedValue({ Items: [{ id: { S: 'user-id' }, userAccess: { M: { codeVerifier: { S: 'verifier' }, authorizationCode: { S: 'code' } } } }] });
+        (getUserData as jest.Mock).mockResolvedValue({ Items: [{ id: { S: 'user-id' }, userAccess: { M: { codeVerifier: { S: 'verifier' }, authorizationCode: { S: 'code' }, expiresAt: { N: (Math.floor(Date.now() / 1000) + 600).toString() } } } }] });
         (jwt.sign as jest.Mock).mockReturnValue('token');
 
         const event: APIGatewayProxyEvent = {
@@ -102,4 +102,32 @@ describe('tokenPKCE handler', () => {
         expect(result.statusCode).toBe(500);
         expect(JSON.parse(result.body).message).toBe('An error occurred while generating the token');
     });
+
+    it('should return 401 if the authorization code is expired', async () => {
+        (getTenant as jest.Mock).mockReturnValue('tenant-id');
+        (getCatalogData as jest.Mock).mockResolvedValue({ Item: { table_name: { S: 'table-name' } } });
+        (getUserData as jest.Mock).mockResolvedValue({
+            Items: [{
+                id: { S: 'user-id' },
+                userAccess: {
+                    M: {
+                        codeVerifier: { S: 'verifier' },
+                        authorizationCode: { S: 'code' },
+                        expiresAt: { N: (Math.floor(Date.now() / 1000) - 10).toString() } // Expired 10 seconds ago
+                    }
+                }
+            }]
+        });
+
+        const event: APIGatewayProxyEvent = {
+            body: JSON.stringify({ username: 'user', authorizationCode: 'code', codeVerifier: 'verifier' }),
+            headers: {},
+        } as any;
+
+        const result = await handler(event);
+
+        expect(result.statusCode).toBe(401);
+        expect(JSON.parse(result.body).message).toBe('Invalid authorization code or code verifier');
+    });
+
 });
