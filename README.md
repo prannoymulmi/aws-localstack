@@ -201,3 +201,13 @@ awslocal dynamodb put-item \
 }
 ```
 
+## Prowler
+
+```bash
+# Run Prowler'
+python prowler.py -e http://localhost:4566 -p localstack
+
+# Run Prowler with specific services
+python prowler.py -e http://localhost:4566 -p localstack --services awslambda iam dynamodb s3 apigateway cloudwatch
+
+```
