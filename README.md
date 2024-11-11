@@ -107,7 +107,7 @@ curl -X POST http://localhost:4566/restapis/o6mwkkwazm/dev/_user_request_/author
 -H "tenant-id: tenant1" \
 -d '{"username": "user-5291-8168", "password": "test1", "codeVerifier": "codeVerifier"}'
 
-curl -X POST http://tenant1.local:4566/restapis/o6mwkkwazm/dev/_user_request_/authorize \
+curl -X POST http://tenant1.local:4566/restapis/o4qbjcrrti/dev/_user_request_/authorize \
 -H "Content-Type: application/json" \
 -d '{"username": "user7@example.com", "password": "test1", "codeVerifier": "codeVerifier"}'
 
@@ -204,10 +204,15 @@ awslocal dynamodb put-item \
 ## Prowler
 
 ```bash
+# Setup localstack profile for the first time use
+aws configure --profile localstack
+
 # Run Prowler'
 python prowler.py -e http://localhost:4566 -p localstack
 
 # Run Prowler with specific services
 python prowler.py -e http://localhost:4566 -p localstack --services awslambda iam dynamodb s3 apigateway cloudwatch
 
+
+python prowler.py aws --compliance gdpr_aws 
 ```

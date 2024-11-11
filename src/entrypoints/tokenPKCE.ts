@@ -53,7 +53,8 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
 
 
         // Check if the authorization code is valid
-        // @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         if (!data.Items || data.Items[0].userAccess.M.codeVerifier.S !== codeVerifier || data.Items[0].userAccess.M.authorizationCode.S !== authorizationCode || parseInt(data.Items[0].userAccess.M.expiresAt.N) < Math.floor(Date.now() / 1000)) {
             return {
                 statusCode: 401,
@@ -81,7 +82,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
         };
     } catch (error) {
         // Handle any errors
-        console.error(error);
+        //console.error(error);
         return {
             statusCode: 500,
             body: JSON.stringify({
