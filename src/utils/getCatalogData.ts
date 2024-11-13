@@ -2,7 +2,7 @@ import {DynamoDBClient, GetItemCommand} from "@aws-sdk/client-dynamodb";
 
 const dynamoDbClient = new DynamoDBClient({ region: 'us-east-1' }); // Adjust the region as needed
 
-export const getCatalogData = async (tenantId:string) => {
+export const  getCatalogData = async (tenantId:string) => {
     // Define parameters to get tenant's table name from the catalog DynamoDB table
     const catalogParams = {
         TableName: 'catalog-table',  // Replace with your catalog DynamoDB table name

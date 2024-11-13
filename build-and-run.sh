@@ -92,7 +92,7 @@ if $FIRST_RUN || $RUN_ALL || $RUN_DB; then
           --table-name "tenant-$k-table" \
           --item "{
               \"id\": {\"S\": \"$userId\"},
-              \"codeVerifier\": {\"S\": \"some-code-verifier-$i\"},
+              \"codeChallenge\": {\"S\": \"some-code-verifier-$i\"},
               \"accessToken\": {\"S\": \"access-token-value-$i\"},
               \"refreshToken\": {\"S\": \"refresh-token-value-$i\"},
               \"expiresAt\": {\"N\": \"1700000000\"},

@@ -5,7 +5,7 @@ type UserProfile = {
 
 export type User = {
     id: string;
-    codeVerifier: string;
+    codeChallenge: string;
     accessToken: string;
     refreshToken: string;
     expiresAt: number;

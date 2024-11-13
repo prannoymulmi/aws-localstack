@@ -26,13 +26,13 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
         let body = JSON.parse(event.body ? event.body : '{}');
 
         // Validate input
-        const { username, password, codeVerifier } = body;
+        const { username, password, codeChallenge } = body;
 
-        if (!username || !password || !codeVerifier) {
+        if (!username || !password || !codeChallenge) {
             return {
                 statusCode: 400,
                 body: JSON.stringify({
-                    message: "Missing 'username', 'password', or 'codeVerifier' in request body",
+                    message: "Missing 'username', 'password', or 'codeChallenge' in request body",
                 }),
             };
         }
@@ -79,7 +79,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
                 ':userAccess': {
                     M: {
                         authorizationCode: { S: authorizationCode },
-                        codeVerifier: { S: codeVerifier },
+                        codeChallenge: { S: codeChallenge },
                         expiresAt: { N: expiresAt.toString() },
                     },
                 },

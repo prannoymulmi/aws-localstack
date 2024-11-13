@@ -3,7 +3,7 @@ import * as jwt from 'jsonwebtoken';
 import {getTenant} from "../utils/getTenant";
 import {getCatalogData} from "../utils/getCatalogData";
 import {getUserData} from "../utils/getUserData";
-
+import {verifySHA} from "../utils/verifySHA";
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     try {
@@ -50,16 +50,26 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
 
         const data = await getUserData(tenantTableName, username);
 
-
-
-        // Check if the authorization code is valid
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        if (!data.Items || data.Items[0].userAccess.M.codeVerifier.S !== codeVerifier || data.Items[0].userAccess.M.authorizationCode.S !== authorizationCode || parseInt(data.Items[0].userAccess.M.expiresAt.N) < Math.floor(Date.now() / 1000)) {
+        if (!data.Items|| data.Items.length === 0 || !data.Items[0].userAccess.M || !data.Items[0].userAccess.M.authorizationCode.S || !data.Items[0].userAccess.M.codeChallenge.S) {
             return {
                 statusCode: 401,
                 body: JSON.stringify({
                     message: "Invalid authorization code or code verifier",
+                }),
+            };
+        }
+
+        const hashedCodeChallenge = data?.Items[0].userAccess.M ? data.Items[0].userAccess.M.codeChallenge.S : "";// Get the hashed code Verifier
+        const isVerifierHashValid = await verifySHA(codeVerifier, hashedCodeChallenge);
+
+        // Check if the authorization code is valid
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        if (!data.Items || !isVerifierHashValid || data.Items[0].userAccess.M.authorizationCode.S !== authorizationCode || parseInt(data.Items[0].userAccess.M.expiresAt.N) < Math.floor(Date.now() / 1000)) {
+            return {
+                statusCode: 401,
+                body: JSON.stringify({
+                    message: "Invalid authorization code or code verifier or expired",
                 }),
             };
         }

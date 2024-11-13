@@ -17,7 +17,7 @@ jest.mock('uuid');
 describe('authorizePKCE handler', () => {
     const mockEvent: APIGatewayProxyEvent = {
         headers: { 'tenant-id': 'test-tenant' },
-        body: JSON.stringify({ username: 'testuser', password: 'testpass', codeVerifier: 'testcodeverifier' }),
+        body: JSON.stringify({ username: 'testuser', password: 'testpass', codeChallenge: 'testcodeChallenge' }),
         // other properties can be added as needed
     } as any;
 
@@ -42,11 +42,11 @@ describe('authorizePKCE handler', () => {
         expect(JSON.parse(response.body).message).toBe("Unknown 'tenant-id' in request headers");
     });
 
-    it('should return 400 if username, password, or codeVerifier is missing', async () => {
+    it('should return 400 if username, password, or codeChallenge is missing', async () => {
         const eventWithoutBody = { ...mockEvent, body: JSON.stringify({}) };
         const response = await handler(eventWithoutBody);
         expect(response.statusCode).toBe(400);
-        expect(JSON.parse(response.body).message).toBe("Missing 'username', 'password', or 'codeVerifier' in request body");
+        expect(JSON.parse(response.body).message).toBe("Missing 'username', 'password', or 'codeChallenge' in request body");
     });
 
     it('should return 404 if tenant is not found in catalog', async () => {

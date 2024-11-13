@@ -68,7 +68,7 @@ awslocal lambda invoke --function-name test \
     --payload '{"body": "{\"name\": \"User\"}"}' output.txt \
     --headers '{"Host": "tenant1.local"}'
 awslocal lambda invoke --function-name lambda-function \
-    --payload '{"username": "user7@example.com", "password": "test1", "codeVerifier": "codeVerifier"}' output.txt
+    --payload '{"username": "user7@example.com", "password": "test1", "codeChallenge": "codeChallenge"}' output.txt
         
  #Print log
 awslocal lambda invoke --function-name lambda-function \
@@ -105,16 +105,17 @@ awslocal apigateway get-integration \
 curl -X POST http://localhost:4566/restapis/o6mwkkwazm/dev/_user_request_/authorize \
 -H "Content-Type: application/json" \
 -H "tenant-id: tenant1" \
--d '{"username": "user-5291-8168", "password": "test1", "codeVerifier": "codeVerifier"}'
+-d '{"username": "user-5291-8168", "password": "test1", "codeChallenge": "codeChallenge"}'
 
+# https://developer.pingidentity.com/en/tools/pkce-code-generator.html generate code verifier and code challenge 
 curl -X POST http://tenant1.local:4566/restapis/o4qbjcrrti/dev/_user_request_/authorize \
 -H "Content-Type: application/json" \
--d '{"username": "user7@example.com", "password": "test1", "codeVerifier": "codeVerifier"}'
+-d '{"username": "user7@example.com", "password": "test1", "codeChallenge": "VkTJmESMq3DOD-fXIwqnD8ENlEOd2Prm3x8zO6u67aA"}'
 
 
-curl -X POST http://tenant1.local:4566/restapis/o6mwkkwazm/dev/_user_request_/token \
+curl -X POST http://tenant1.local:4566/restapis/o4qbjcrrti/dev/_user_request_/token \
 -H "Content-Type: application/json" \
--d '{"username": "user7@example.com", "authorizationCode": "5bfa5cd1-02ec-46ca-b9ed-39fb477eb104", "codeVerifier": "codeVerifier"}'
+-d '{"username": "user7@example.com", "authorizationCode": "87268e38-2959-41fb-9f43-1c2d4a270733", "codeVerifier": "wOV-nI-QSyesPpyjPpyjkBPx7PCimGUBrxOqKgc8idUNLnzeIkUq1nJI4R2hEyoolgexTqQfAd4hbX8mi7ud0BpQv16u6R9a14fWjXjj65uWDnV-nfI7Ow-YaippAChI"}'
 
 # Logs 
 awslocal logs describe-log-streams --log-group-name "/aws/lambda/my_lambda_function"
@@ -144,7 +145,7 @@ awslocal dynamodb put-item \
     --table-name tenant-1-table \
     --item '{
         "id": {"S": "unique-user-id"},
-        "codeVerifier": {"S": "some-code-verifier"},
+        "codeChallenge": {"S": "some-code-verifier"},
         "idToken": {"S": "id-token-value"},
         "accessToken": {"S": "access-token-value"},
         "refreshToken": {"S": "refresh-token-value"},

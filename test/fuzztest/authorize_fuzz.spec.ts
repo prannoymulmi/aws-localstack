@@ -16,12 +16,12 @@ describe('Fuzz testing POST /authorize', () => {
                 fc.record({
                     username: fc.constant(username),
                     password: fc.constant(password),
-                    codeVerifier: fc.string(),
+                    codeChallenge: fc.string(),
                 }),
                 async (payload) => {
                     console.log("Sending request with payload:");
                     try {
-                        console.log(`Fuzzing with username: ${username}, password: ${password}, codeVerifier: ${payload.codeVerifier}`);
+                        console.log(`Fuzzing with username: ${username}, password: ${password}, codeChallenge: ${payload.codeChallenge}`);
                         const response = await axios.post(url, payload, {headers, timeout: 30000});
                         console.log("Received response:", response.status);
                         expect(response.status).toBe(200);
@@ -43,18 +43,18 @@ describe('Fuzz testing POST /authorize', () => {
     }, 3000000); // Increase timeout to 50 Minutes
 
 
-    test('should handle fuzzed payloads for codeverifier', async () => {
+    test('should handle fuzzed payloads for codeChallenge', async () => {
         for (let i = 0; i < 10; i++) {
             const username = fc.sample(fc.string(), 1)[0];
             const password = fc.sample(fc.string(), 1)[0];
-            const codeVerifier = fc.sample(fc.string(), 1)[0];
-            console.log(`Fuzzing iteration ${i} with username: ${username}, password: ${password}, codeVerifier: ${codeVerifier}`);
+            const codeChallenge = fc.sample(fc.string(), 1)[0];
+            console.log(`Fuzzing iteration ${i} with username: ${username}, password: ${password}, codeChallenge: ${codeChallenge}`);
             await fc.assert(
                 fc.asyncProperty(
                     fc.record({
                         username: fc.constant(username),
                         password: fc.constant(password),
-                        codeVerifier: fc.constant(codeVerifier),
+                        codeChallenge: fc.constant(codeChallenge),
                     }),
                     async (payload) => {
                         console.log("Sending request with payload:", payload);
@@ -88,14 +88,14 @@ describe('Fuzz testing POST /authorize', () => {
         for (let i = 0; i < 10; i++) {
             const username = fc.sample(fc.string(), 1)[0];
             const password = fc.sample(fc.string(), 1)[0];
-            const codeVerifier = fc.sample(fc.string(), 1)[0];
-            console.log(`Fuzzing iteration ${i} with username: ${username}, password: ${password}, codeVerifier: ${codeVerifier}`);
+            const codeChallenge = fc.sample(fc.string(), 1)[0];
+            console.log(`Fuzzing iteration ${i} with username: ${username}, password: ${password}, codeChallenge: ${codeChallenge}`);
             await fc.assert(
                 fc.asyncProperty(
                     fc.record({
                         username: fc.constant(username),
                         password: fc.constant(password),
-                        codeVerifier: fc.constant(codeVerifier),
+                        codeChallenge: fc.constant(codeChallenge),
                     }),
                     async (payload) => {
                         console.log("Sending request with payload:", payload);
