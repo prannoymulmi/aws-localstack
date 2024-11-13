@@ -5,6 +5,7 @@ import {validateUserCredentials} from "../utils/validateUserCredentials";
 import { v4 as uuidv4 } from 'uuid';
 import {getCatalogData} from "../utils/getCatalogData";
 import {getUserData} from "../utils/getUserData";
+import {isCodeChallengeValid} from "../utils/verifySHA";
 
 const dynamoDbClient = new DynamoDBClient({ region: 'us-east-1' }); // Adjust the region as needed
 
@@ -28,7 +29,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
         // Validate input
         const { username, password, codeChallenge } = body;
 
-        if (!username || !password || !codeChallenge) {
+        if (!username || !password || !codeChallenge || !isCodeChallengeValid(codeChallenge)) {
             return {
                 statusCode: 400,
                 body: JSON.stringify({

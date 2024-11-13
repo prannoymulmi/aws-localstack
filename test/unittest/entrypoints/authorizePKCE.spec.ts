@@ -17,7 +17,7 @@ jest.mock('uuid');
 describe('authorizePKCE handler', () => {
     const mockEvent: APIGatewayProxyEvent = {
         headers: { 'tenant-id': 'test-tenant' },
-        body: JSON.stringify({ username: 'testuser', password: 'testpass', codeChallenge: 'testcodeChallenge' }),
+        body: JSON.stringify({ username: 'testuser', password: 'testpass', codeChallenge: '1GqTy6v3zj0Cevx8xNrhFRIULvEzbmd_tpmlV2PCb6c' }),
         // other properties can be added as needed
     } as any;
 
