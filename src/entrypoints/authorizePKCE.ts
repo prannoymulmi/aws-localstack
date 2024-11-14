@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import {getCatalogData} from "../utils/getCatalogData";
 import {getUserData} from "../utils/getUserData";
 import {isCodeChallengeValid} from "../utils/verifySHA";
+import {AuthorizationRequest, authorizationSchema} from "../types/UserType";
 
 const dynamoDbClient = new DynamoDBClient({ region: 'us-east-1' }); // Adjust the region as needed
 
@@ -24,11 +25,20 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
         }
 
         // Parse the request body
-        let body = JSON.parse(event.body ? event.body : '{}');
+        let body: AuthorizationRequest = JSON.parse(event.body ? event.body : '{}');
 
         // Validate input
         const { username, password, codeChallenge } = body;
-
+        try {
+            authorizationSchema.parse(body);
+        } catch {
+            return {
+                statusCode: 400,
+                body: JSON.stringify({
+                    message: "Invalid request body",
+                }),
+            };
+        }
         if (!username || !password || !codeChallenge || !isCodeChallengeValid(codeChallenge)) {
             return {
                 statusCode: 400,

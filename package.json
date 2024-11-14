@@ -25,7 +25,8 @@
     "jsonwebtoken": "^9.0.2",
     "uuidv4": "^6.2.13",
     "winston": "^3.15.0",
-    "winston-cloudwatch": "^6.3.0"
+    "winston-cloudwatch": "^6.3.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@aws-sdk/client-dynamodb": "^3.675.0",

@@ -1,3 +1,5 @@
+import {z} from "zod";
+
 type UserProfile = {
     name: string;
     email: string;
@@ -13,3 +15,36 @@ export type User = {
     password: string;
     userProfile: UserProfile;
 };
+
+export type AuthorizationRequest ={
+    response_type: string;
+    client_id: string;
+    redirect_uri: string;
+    scope: string;
+    state: string;
+    codeChallenge: string;
+    code_challenge_method: string;
+    username: string;
+    password: string;
+}
+
+export type TokenRequest ={
+    grant_type: string;
+    code: string;
+    redirect_uri: string;
+    client_id: string;
+    code_verifier: string;
+}
+
+export const authorizationSchema = z.object({
+    response_type: z.literal('code').optional() ,
+    username: z.string(),
+    password: z.string(),
+    client_id: z.string().optional() ,
+    redirect_uri: z.string().url().optional() ,
+    scope: z.string().optional() ,
+    state: z.string().optional() ,
+    codeChallenge: z.string(),
+    code_challenge_method: z.literal('S256').optional() ,
+});
+

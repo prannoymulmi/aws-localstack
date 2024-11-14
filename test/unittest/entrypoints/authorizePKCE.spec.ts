@@ -46,6 +46,18 @@ describe('authorizePKCE handler', () => {
         const eventWithoutBody = { ...mockEvent, body: JSON.stringify({}) };
         const response = await handler(eventWithoutBody);
         expect(response.statusCode).toBe(400);
+        expect(JSON.parse(response.body).message).toBe("Invalid request body");
+    });
+
+    it('should return 400 if code challenge is short', async () => {
+        const mockEventShort: APIGatewayProxyEvent = {
+            headers: { 'tenant-id': 'test-tenant' },
+            body: JSON.stringify({ username: 'testuser', password: 'testpass', codeChallenge: '1GqTy6v3asdasdasdasd' }),
+            // other properties can be added as needed
+        } as any;
+        const event = { ...mockEventShort};
+        const response = await handler(event);
+        expect(response.statusCode).toBe(400);
         expect(JSON.parse(response.body).message).toBe("Missing 'username', 'password', or 'codeChallenge' in request body");
     });
 
