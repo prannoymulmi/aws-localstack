@@ -23,7 +23,37 @@
 # Validates the docker-compose.yml, if the configurations are ok
 localstack config validate
 ```
+### Dependencies 
 
+Dependencies are managed using Yarn. To install the dependencies, run the following command:
+
+| Dependency | Version | Description |
+|------------|---------|-------------|
+| argon2 | ^0.41.1 | A password hashing library implementing the Argon2 algorithm, designed for secure password storage. |
+| axios | ^1.7.7 | A promise-based HTTP client for making HTTP requests in both Node.js and browsers. |
+| esbuild | ^0.24.0 | A fast JavaScript and TypeScript bundler and minifier optimized for development and production builds. |
+| fast-check | ^3.23.1 | A property-based testing library for generating random test cases and checking properties of your code. |
+| hash-wasm | ^4.11.0 | A fast cryptographic hashing library using WebAssembly for efficiency. |
+| jest-fuzz | ^0.1.2 | A fuzz testing library for Jest, used to test for unexpected edge cases. |
+| jsonwebtoken | ^9.0.2 | A library to sign, verify, and decode JSON Web Tokens (JWT), commonly used for authentication and authorization. |
+| uuidv4 | ^6.2.13 | A library to generate UUID (Universally Unique Identifier) version 4, primarily used for creating unique identifiers. |
+| winston | ^3.15.0 | A flexible and popular logging library for Node.js, supporting multiple log transports. |
+| winston-cloudwatch | ^6.3.0 | A transport for Winston that allows logging to AWS CloudWatch for centralized logging and monitoring. |
+| zod | ^3.23.8 | A TypeScript-first schema validation library for parsing and validating inputs. |
+| @aws-sdk/client-dynamodb | ^3.675.0 | AWS SDK Client for DynamoDB, used for interacting with Amazon DynamoDB from Node.js applications. |
+| @eslint/js | ^9.14.0 | ESLint's core JavaScript configuration, used to enforce coding standards and best practices. |
+| @types/aws-lambda | ^8.10.145 | TypeScript type definitions for AWS Lambda, providing type support for AWS Lambda functions. |
+| @types/jest | ^29.5.14 | TypeScript type definitions for Jest, enabling type safety in Jest test cases. |
+| @types/jsonwebtoken | ^9.0.7 | TypeScript type definitions for jsonwebtoken, helping with type safety when using JWTs in TypeScript code. |
+| @types/node | ^22.7.7 | TypeScript type definitions for Node.js, providing type support for Node.js APIs in TypeScript projects. |
+| @typescript-eslint/eslint-plugin | ^8.13.0 | ESLint plugin that provides TypeScript-specific linting rules. |
+| aws-sdk-client-mock | ^4.1.0 | A mocking library for the AWS SDK, used in unit tests to mock AWS services like DynamoDB. |
+| eslint | ^9.14.0 | A powerful linter for JavaScript and TypeScript that helps identify and fix coding issues. |
+| eslint-plugin-security-node | ^1.1.4 | An ESLint plugin that identifies potential security vulnerabilities in Node.js code. |
+| jest | ^29.7.0 | A JavaScript testing framework that supports unit tests, integration tests, and snapshot testing. |
+| ts-jest | ^29.2.5 | A Jest transformer that allows Jest to run TypeScript code directly. |
+| typescript | ^5.6.3 | The TypeScript programming language, which adds static types to JavaScript to improve developer productivity and code quality. |
+| typescript-eslint | ^8.13.0 | A set of tools that allow ESLint to analyze TypeScript code and enforce best practices. |
 
 
 ## Introduction
