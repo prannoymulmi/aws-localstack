@@ -33,7 +33,7 @@ export type TokenRequest ={
     code: string;
     redirect_uri: string;
     client_id: string;
-    code_verifier: string;
+    codeVerifier: string;
 }
 
 export const authorizationSchema = z.object({
@@ -48,3 +48,10 @@ export const authorizationSchema = z.object({
     code_challenge_method: z.literal('S256').optional() ,
 });
 
+export const tokenRequestSchema = z.object({
+    grant_type: z.literal('authorization_code').optional(),
+    code: z.string(),
+    redirect_uri: z.string().url().optional(),
+    client_id: z.string().optional(),
+    codeVerifier: z.string()
+});

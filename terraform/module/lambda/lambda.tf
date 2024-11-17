@@ -22,7 +22,7 @@ resource "aws_lambda_function" "_" {
   filename = "${path.module}/../../../deployment/${var.lambda_function_name}/${var.lambda_function_name}.zip"
 
   source_code_hash = filebase64sha256("${path.module}/../../../deployment/${var.lambda_function_name}/${var.lambda_function_name}.zip")
-
+  reserved_concurrent_executions = var.reserved_concurrent_executions
   environment {
     variables = {
       LOG_LEVEL = var.log_level
