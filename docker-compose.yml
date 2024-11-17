@@ -12,7 +12,7 @@ services:
       #- "0.0.0.0:4510-4559:4510-4559"
     environment:
       # LocalStack configuration: https://docs.localstack.cloud/references/configuration/
-      - SERVICES=s3,lambda,dynamodb,iam,apigateway,logs,cloudwatch,route53,sts,ec2, events,ecr, ecs, efs, eks, elasticache, elasticbeanstalk, elb, elbv2, emr, eventbridge, fms, fsx, glacier, glue, guardduty, inspector2, kafka, kinesis, kms, lightsail, macie, mq, neptune, networkfirewall, opensearch, organizations, rds, redshift, resourceexplorer2, route53, s3, sagemaker, secretsmanager, securityhub, ses, shield, sns, sqs, ssm, ssmincidents, storagegateway, transfer, trustedadvisor, vpc, waf, wafv2, wellarchitected, workspaces
+      - SERVICES=s3,cloudtrail,lambda,dynamodb,iam,apigateway,logs,cloudwatch,route53,sts,ec2, events,ecr, ecs, efs, eks, elasticache, elasticbeanstalk, elb, elbv2, emr, eventbridge, fms, fsx, glacier, glue, guardduty, inspector2, kafka, kinesis, kms, lightsail, macie, mq, neptune, networkfirewall, opensearch, organizations, rds, redshift, resourceexplorer2, route53, s3, sagemaker, secretsmanager, securityhub, ses, shield, sns, sqs, ssm, ssmincidents, storagegateway, transfer, trustedadvisor, vpc, waf, wafv2, wellarchitected, workspaces
       - LOCALSTACK_AUTH_TOKEN=${LOCAL_STACK_HOBBY_TOKEN}
       - DEBUG=1                       # Optional: Enable debug output
       - PERSISTENCE=1
