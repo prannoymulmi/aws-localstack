@@ -5,16 +5,19 @@ import { getTenant } from '../../../src/utils/getTenant';
 import { getCatalogData } from '../../../src/utils/getCatalogData';
 import { getUserData } from '../../../src/utils/getUserData';
 import {verifySHA} from "../../../src/utils/verifySHA";
+import {validateClientId} from "../../../src/utils/validateClientId";
 
 jest.mock('jsonwebtoken');
 jest.mock('../../../src/utils/getTenant');
 jest.mock('../../../src/utils/getCatalogData');
 jest.mock('../../../src/utils/getUserData');
 jest.mock('../../../src/utils/verifySHA');
+jest.mock('../../../src/utils/validateClientId');
 
 describe('tokenPKCE handler', () => {
     beforeEach(() => {
         jest.clearAllMocks();
+        (validateClientId as jest.Mock).mockResolvedValue(true);
     });
 
     it('should return 400 if username, authorizationCode, or codeChallenge is missing', async () => {
@@ -48,7 +51,7 @@ describe('tokenPKCE handler', () => {
         (getCatalogData as jest.Mock).mockResolvedValue({});
 
         const event: APIGatewayProxyEvent = {
-            body: JSON.stringify({ username: 'user', authorizationCode: 'code', codeVerifier: 'verifier' }),
+            body: JSON.stringify({ username: 'user', authorizationCode: 'code', codeVerifier: 'verifier', client_id:'client-id', grant_type: 'authorization_code' }),
             headers: {},
         } as any;
 
@@ -64,7 +67,7 @@ describe('tokenPKCE handler', () => {
         (getUserData as jest.Mock).mockResolvedValue({ Items: [{ userAccess: { M: { codeChallenge: { S: 'wrong-verifier' }, authorizationCode: { S: 'wrong-code' } } } }] });
 
         const event: APIGatewayProxyEvent = {
-            body: JSON.stringify({ username: 'user', authorizationCode: 'code', codeVerifier: 'verifier' }),
+            body: JSON.stringify({ username: 'user', authorizationCode: 'code', codeVerifier: 'verifier', client_id:'client-id', grant_type: 'authorization_code' }),
             headers: {},
         } as any;
 
@@ -82,7 +85,7 @@ describe('tokenPKCE handler', () => {
         (verifySHA as jest.Mock).mockResolvedValue(true);
 
         const event: APIGatewayProxyEvent = {
-            body: JSON.stringify({ username: 'user', authorizationCode: 'code', codeVerifier: 'verifier' }),
+            body: JSON.stringify({ username: 'user', authorizationCode: 'code', codeVerifier: 'verifier', client_id:'client-id', grant_type: 'authorization_code' }),
             headers: {},
         } as any;
 
@@ -125,7 +128,7 @@ describe('tokenPKCE handler', () => {
         (verifySHA as jest.Mock).mockResolvedValue(false); // Invalid code verifier
 
         const event: APIGatewayProxyEvent = {
-            body: JSON.stringify({ username: 'user', authorizationCode: 'code', codeVerifier: 'verifier' }),
+            body: JSON.stringify({ username: 'user', authorizationCode: 'code', codeVerifier: 'verifier', client_id:'client-id', grant_type: 'authorization_code' }),
             headers: {},
         } as any;
 
@@ -133,6 +136,38 @@ describe('tokenPKCE handler', () => {
 
         expect(result.statusCode).toBe(401);
         expect(JSON.parse(result.body).message).toBe('Invalid authorization code or code verifier or expired');
+    });
+
+    it('should return 400 if the grant_type is missing', async () => {
+        (getTenant as jest.Mock).mockReturnValue('tenant-id');
+        (getCatalogData as jest.Mock).mockResolvedValue({ Item: { table_name: { S: 'table-name' } } });
+        (validateClientId as jest.Mock).mockResolvedValue(true);
+
+        const event: APIGatewayProxyEvent = {
+            body: JSON.stringify({ username: 'user', authorizationCode: 'code', codeVerifier: 'verifier', client_id:'client-id' }), // Invalid body
+            headers: {},
+        } as any;
+
+        const result = await handler(event);
+
+        expect(result.statusCode).toBe(400);
+        expect(JSON.parse(result.body).message).toBe('Invalid request body');
+    });
+
+    it('should return 400 if the client_id is wrong', async () => {
+        (getTenant as jest.Mock).mockReturnValue('tenant-id');
+        (getCatalogData as jest.Mock).mockResolvedValue({ Item: { table_name: { S: 'table-name' } } });
+        (validateClientId as jest.Mock).mockResolvedValue(false);
+
+        const event: APIGatewayProxyEvent = {
+            body: JSON.stringify({ username: 'user', authorizationCode: 'code', codeVerifier: 'verifier', client_id:'client-id' }), // Invalid body
+            headers: {},
+        } as any;
+
+        const result = await handler(event);
+
+        expect(result.statusCode).toBe(401);
+        expect(JSON.parse(result.body).message).toBe('Invalid client ID');
     });
 
     it('should return 401 if the authorization code is expired', async () => {
@@ -152,7 +187,7 @@ describe('tokenPKCE handler', () => {
         });
 
         const event: APIGatewayProxyEvent = {
-            body: JSON.stringify({ username: 'user', authorizationCode: 'code', codeVerifier: 'verifier' }),
+            body: JSON.stringify({ username: 'user', authorizationCode: 'code', codeVerifier: 'verifier', client_id:'client-id', grant_type: 'authorization_code' }),
             headers: {},
         } as any;
 

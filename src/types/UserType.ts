@@ -50,7 +50,7 @@ export const authorizationSchema = z.object({
 
 export const tokenRequestSchema = z.object({
     grant_type: z.literal('authorization_code'),
-    code: z.string(),
+    authorizationCode: z.string(),
     redirect_uri: z.string().url().optional(),
     client_id: z.string(),
     codeVerifier: z.string()

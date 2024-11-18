@@ -4,6 +4,8 @@ import {getTenant} from "../utils/getTenant";
 import {getCatalogData} from "../utils/getCatalogData";
 import {getUserData} from "../utils/getUserData";
 import {verifySHA} from "../utils/verifySHA";
+import {validateClientId} from "../utils/validateClientId";
+import {authorizationSchema, tokenRequestSchema} from "../types/UserType";
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     try {
@@ -30,6 +32,28 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
                 body: JSON.stringify({
                     message: "Unknown 'tenant-id' in request headers",
                     headers: event.headers
+                }),
+            };
+        }
+
+        const isValidClientId = await validateClientId(tenantId, body.client_id);
+
+        if(!isValidClientId) {
+            return {
+                statusCode: 401,
+                body: JSON.stringify({
+                    message: "Invalid client ID",
+                }),
+            };
+        }
+
+        try {
+            tokenRequestSchema.parse(body);
+        } catch {
+            return {
+                statusCode: 400,
+                body: JSON.stringify({
+                    message: "Invalid request body",
                 }),
             };
         }
