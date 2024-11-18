@@ -140,7 +140,7 @@ curl -X POST http://localhost:4566/restapis/o6mwkkwazm/dev/_user_request_/author
 # https://developer.pingidentity.com/en/tools/pkce-code-generator.html generate code verifier and code challenge 
 curl -X POST http://tenant1.local:4566/restapis/o4qbjcrrti/dev/_user_request_/authorize \
 -H "Content-Type: application/json" \
--d '{"username": "user7@example.com", "password": "test1", "codeChallenge": "VkTJmESMq3DOD-fXIwqnD8ENlEOd2Prm3x8zO6u67aA"}'
+-d '{"username": "user7@example.com","client_id":"tenant1-client-id-1", "password": "test1", "codeChallenge": "VkTJmESMq3DOD-fXIwqnD8ENlEOd2Prm3x8zO6u67aA"}'
 
 
 curl -X POST http://tenant1.local:4566/restapis/o4qbjcrrti/dev/_user_request_/token \

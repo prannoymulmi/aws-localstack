@@ -76,7 +76,8 @@ if $FIRST_RUN || $RUN_ALL || $RUN_DB; then
                 --table-name "catalog-table" \
                 --item "{
                     \"tenantId\": {\"S\": \"tenant$k\"},
-                     \"table_name\": {\"S\": \"tenant-$k-table\"}
+                     \"table_name\": {\"S\": \"tenant-$k-table\"},
+                     \"client_ids\": {\"L\": [{\"S\": \"tenant$k-client-id-1\"}, {\"S\": \"tenant$k-client-id-2\"}, {\"S\": \"tenant$k-client-id-3\"}]}
                 }"
     echo "Inserted tenant$k in catalog-table"
     for i in {1..10}

@@ -40,7 +40,7 @@ export const authorizationSchema = z.object({
     response_type: z.literal('code').optional() ,
     username: z.string(),
     password: z.string(),
-    client_id: z.string().optional() ,
+    client_id: z.string(),
     redirect_uri: z.string().url().optional() ,
     scope: z.string().optional() ,
     state: z.string().optional() ,
@@ -49,9 +49,9 @@ export const authorizationSchema = z.object({
 });
 
 export const tokenRequestSchema = z.object({
-    grant_type: z.literal('authorization_code').optional(),
+    grant_type: z.literal('authorization_code'),
     code: z.string(),
     redirect_uri: z.string().url().optional(),
-    client_id: z.string().optional(),
+    client_id: z.string(),
     codeVerifier: z.string()
 });

@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import {getCatalogData} from "../utils/getCatalogData";
 import {getUserData} from "../utils/getUserData";
 import {isCodeChallengeValid} from "../utils/verifySHA";
+import {validateClientId} from "../utils/validateClientId";
 import {AuthorizationRequest, authorizationSchema} from "../types/UserType";
 
 const dynamoDbClient = new DynamoDBClient({ region: 'us-east-1' }); // Adjust the region as needed
@@ -64,6 +65,16 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
         const tenantTableName = catalogData.Item.table_name.S ? catalogData.Item.table_name.S : "";  // Get the tenant's specific table name
 
         const userData = await getUserData(tenantTableName, username);
+        const isValidClientId = await validateClientId(tenantId, body.client_id);
+
+        if(!isValidClientId) {
+            return {
+                statusCode: 401,
+                body: JSON.stringify({
+                    message: "Invalid client ID",
+                }),
+            };
+        }
 
         const isValidUser = await validateUserCredentials(username, password, userData);
         if (!isValidUser) {
