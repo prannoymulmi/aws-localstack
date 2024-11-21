@@ -27,6 +27,9 @@ if [ ! -d "$VOLUME_DIR" ]; then
   echo "Directory '$VOLUME_DIR' created."
 fi
 
+# Call create-keys.sh script
+./create-keys.sh
+
 # Check if the bucket exists
 if ! awslocal s3api head-bucket --bucket "$BUCKET_NAME" 2>/dev/null; then
     # Create the bucket if it doesn't exist

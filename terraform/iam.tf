@@ -65,3 +65,23 @@ resource "aws_iam_policy" "lambda_cloudwatch_policy" {
     ]
   })
 }
+
+
+# IAM Policy for Lambda to log to CloudWatch
+resource "aws_iam_policy" "private_key_read_policy" {
+  name        = "private_key_read_policy"
+  description = "IAM policy to allow Lambda to read private key from secret manager"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "secretsmanager:GetSecretValue"
+        ],
+        Resource = aws_secretsmanager_secret.private_key.arn
+      }
+    ]
+  })
+}

@@ -6,6 +6,9 @@ import {getUserData} from "../utils/getUserData";
 import {verifySHA} from "../utils/verifySHA";
 import {validateClientId} from "../utils/validateClientId";
 import {authorizationSchema, tokenRequestSchema} from "../types/UserType";
+import * as fs from "node:fs";
+import path from "node:path";
+import {getSecret} from "../utils/getSecret";
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     try {
@@ -98,13 +101,20 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
             };
         }
 
+
+        // Load the private key from Secrets Manager
+        const privateKey = await getSecret('private_key');
+
         // Generate JWT token
         const token = jwt.sign(
             {
                 userId: data.Items[0].id.S
             },
-            'your-secret-key', // Replace with your secret key
-            { expiresIn: '1h' }
+            privateKey, // Replace with your secret key
+            {
+                expiresIn: '1h',
+                algorithm: 'RS256',
+            }
         );
 
         // Return the token

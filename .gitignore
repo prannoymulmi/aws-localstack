@@ -15,3 +15,7 @@ volume
 node_modules
 output.txt
 **/output.txt
+
+# ignore keys
+*.pem
+**/keys/*

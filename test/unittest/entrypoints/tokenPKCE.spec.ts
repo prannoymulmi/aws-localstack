@@ -6,6 +6,7 @@ import { getCatalogData } from '../../../src/utils/getCatalogData';
 import { getUserData } from '../../../src/utils/getUserData';
 import {verifySHA} from "../../../src/utils/verifySHA";
 import {validateClientId} from "../../../src/utils/validateClientId";
+import {getSecret} from "../../../src/utils/getSecret";
 
 jest.mock('jsonwebtoken');
 jest.mock('../../../src/utils/getTenant');
@@ -13,11 +14,13 @@ jest.mock('../../../src/utils/getCatalogData');
 jest.mock('../../../src/utils/getUserData');
 jest.mock('../../../src/utils/verifySHA');
 jest.mock('../../../src/utils/validateClientId');
+jest.mock('../../../src/utils/getSecret');
 
 describe('tokenPKCE handler', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         (validateClientId as jest.Mock).mockResolvedValue(true);
+        (getSecret as jest.Mock).mockResolvedValue("secret");
     });
 
     it('should return 400 if username, authorizationCode, or codeChallenge is missing', async () => {

@@ -79,6 +79,9 @@ docker compose up
 ## Start Docker compose (If no token available)
 docker-compose -f docker-compose-unpaid.yml up
 
+## create private keys for token signature
+./create-keys.sh # this will create private and public keys in the root folder, this is included in the build-and-run.sh script
+
 # Builds and starts the project as Localstack community edition is not persistent
 ./build-and-run.sh
 
@@ -143,9 +146,13 @@ curl -X POST http://tenant1.local:4566/restapis/o4qbjcrrti/dev/_user_request_/au
 -d '{"username": "user7@example.com","client_id":"tenant1-client-id-1", "password": "test1", "codeChallenge": "VkTJmESMq3DOD-fXIwqnD8ENlEOd2Prm3x8zO6u67aA"}'
 
 
+curl -X POST http://tenant2.local:4566/restapis/o4qbjcrrti/dev/_user_request_/authorize \
+-H "Content-Type: application/json" \
+-d '{"username": "user7@example.com","client_id":"tenant2-client-id-1", "password": "test2", "codeChallenge": "VkTJmESMq3DOD-fXIwqnD8ENlEOd2Prm3x8zO6u67aA"}'
+
 curl -X POST http://tenant1.local:4566/restapis/o4qbjcrrti/dev/_user_request_/token \
 -H "Content-Type: application/json" \
--d '{"username": "user7@example.com","grant_type": "authorization_code","client_id":"tenant1-client-id-1", "authorizationCode": "83a7d6cd-c730-45b0-901d-8865ce80b0b7", "codeVerifier": "wOV-nI-QSyesPpyjPpyjkBPx7PCimGUBrxOqKgc8idUNLnzeIkUq1nJI4R2hEyoolgexTqQfAd4hbX8mi7ud0BpQv16u6R9a14fWjXjj65uWDnV-nfI7Ow-YaippAChI"}'
+-d '{"username": "user7@example.com","grant_type": "authorization_code","client_id":"tenant1-client-id-1", "authorizationCode": "ec886d24-b2ab-460b-8730-d03f177bd081", "codeVerifier": "wOV-nI-QSyesPpyjPpyjkBPx7PCimGUBrxOqKgc8idUNLnzeIkUq1nJI4R2hEyoolgexTqQfAd4hbX8mi7ud0BpQv16u6R9a14fWjXjj65uWDnV-nfI7Ow-YaippAChI"}'
 
 # Logs 
 awslocal logs describe-log-streams --log-group-name "/aws/lambda/my_lambda_function"
