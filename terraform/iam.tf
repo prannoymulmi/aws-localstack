@@ -77,7 +77,7 @@ resource "aws_iam_policy" "test_bad_policy" {
       {
         Effect = "Allow",
         Action = [
-          "logs:*"
+          "dynamodb:*"
         ],
         Resource = "*"
       }
