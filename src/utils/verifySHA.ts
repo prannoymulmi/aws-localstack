@@ -6,8 +6,7 @@ export const verifySHA = async (toVerify: string, expectedHash: string): Promise
     // convert the hash to base64 url safe encoding without padding
     const base64Hash = Buffer.from(hash, 'hex').toString('base64').replace(/=+$/, '').replace(/\+/g, '-').replace(/\//g, '_');
     // prevent timing attacks by using crypto.timingSafeEqual
-    return base64Hash === expectedHash;
-    //return crypto.timingSafeEqual(Buffer.from(base64Hash), Buffer.from(expectedHash));
+    return crypto.timingSafeEqual(Buffer.from(base64Hash), Buffer.from(expectedHash));
 };
 
 export const isCodeChallengeValid = (data: string): boolean => {

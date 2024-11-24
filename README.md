@@ -152,7 +152,11 @@ curl -X POST http://tenant2.local:4566/restapis/o4qbjcrrti/dev/_user_request_/au
 
 curl -X POST http://tenant1.local:4566/restapis/o4qbjcrrti/dev/_user_request_/token \
 -H "Content-Type: application/json" \
--d '{"username": "user7@example.com","grant_type": "authorization_code","client_id":"tenant1-client-id-1", "authorizationCode": "ec886d24-b2ab-460b-8730-d03f177bd081", "codeVerifier": "wOV-nI-QSyesPpyjPpyjkBPx7PCimGUBrxOqKgc8idUNLnzeIkUq1nJI4R2hEyoolgexTqQfAd4hbX8mi7ud0BpQv16u6R9a14fWjXjj65uWDnV-nfI7Ow-YaippAChI"}'
+-d '{"username": "user7@example.com","grant_type": "authorization_code","client_id":"tenant1-client-id-1", "authorizationCode": "b0ab1b8f-03da-4092-bf58-0c20af00bfd0", "codeVerifier": "wOV-nI-QSyesPpyjPpyjkBPx7PCimGUBrxOqKgc8idUNLnzeIkUq1nJI4R2hEyoolgexTqQfAd4hbX8mi7ud0BpQv16u6R9a14fWjXjj65uWDnV-nfI7Ow-YaippAChI"}'
+
+curl -X POST http://tenant1.local:4566/restapis/o4qbjcrrti/dev/_user_request_/token \
+-H "Content-Type: application/json" \
+-d '{"username": "user7@example.com","client_id":"tenant1-client-id-1", "authorizationCode": "ec886d24-b2ab-460b-8730-d03f177bd081", "codeVerifier": "wOV-nI-QSyesPpyjPpyjkBPx7PCimGUBrxOqKgc8idUNLnzeIkUq1nJI4R2hEyoolgexTqQfAd4hbX8mi7ud0BpQv16u6R9a14fWjXjj65uWDnV-nfI7Ow-YaippAChI"}'
 
 # Logs 
 awslocal logs describe-log-streams --log-group-name "/aws/lambda/my_lambda_function"
