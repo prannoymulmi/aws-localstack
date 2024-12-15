@@ -55,7 +55,19 @@ describe('authorizePKCE handler', () => {
     it('should return 400 if code challenge is short', async () => {
         const mockEventShort: APIGatewayProxyEvent = {
             headers: { 'tenant-id': 'test-tenant' },
-            body: JSON.stringify({ username: 'testuser', password: 'testpass', codeChallenge: '1GqTy6v3asdasdasdasd', client_id: 'client1' }),
+            body: JSON.stringify({ username: 'testuser', password: 'testpass', codeChallenge: generateRandomString(42), client_id: 'client1' }),
+            // other properties can be added as needed
+        } as any;
+        const event = { ...mockEventShort};
+        const response = await handler(event);
+        expect(response.statusCode).toBe(400);
+        expect(JSON.parse(response.body).message).toBe("Missing 'username', 'password', or 'codeChallenge' in request body");
+    });
+
+    it('should return 400 if code challenge is long', async () => {
+        const mockEventShort: APIGatewayProxyEvent = {
+            headers: { 'tenant-id': 'test-tenant' },
+            body: JSON.stringify({ username: 'testuser', password: 'testpass', codeChallenge: generateRandomString(129), client_id: 'client1' }),
             // other properties can be added as needed
         } as any;
         const event = { ...mockEventShort};
@@ -95,3 +107,15 @@ describe('authorizePKCE handler', () => {
         expect(responseBody.expiresAt.N).toBe((Math.floor(Date.now() / 1000) + 600).toString());
     });
 });
+
+const generateRandomString= (length: number): string =>{
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    const charactersLength = characters.length;
+
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+
+    return result;
+}
