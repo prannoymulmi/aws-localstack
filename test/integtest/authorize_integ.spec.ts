@@ -1,5 +1,4 @@
-import axios, {AxiosError} from 'axios';
-import * as fc from 'fast-check';
+import axios from 'axios';
 
 // o6mwkkwazm - is the resapi id and this must be replaced with your own restapi-id from the output
 const url = 'http://tenant1.local:4566/restapis/o4qbjcrrti/dev/_user_request_/authorize';
