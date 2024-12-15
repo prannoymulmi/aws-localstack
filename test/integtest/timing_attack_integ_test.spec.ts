@@ -2,7 +2,7 @@ import {QueryCommandOutput} from "@aws-sdk/client-dynamodb";
 import {validateUserCredentials, validateUserCredentialsInsecure} from "../../src/utils/validateUserCredentials";
 import * as argon2 from 'argon2';
 
-const NUMBER_OF_ITERATIONS = 30;
+const NUMBER_OF_ITERATIONS = 100;
 describe('validateUserCredentials timing test', () => {
     it('running time test for incorrect passwords', async () => {
         const hash = await argon2.hash("correct_pass", {
@@ -29,6 +29,7 @@ describe('validateUserCredentials timing test', () => {
             expect(result).toBe(false);
         }
         console.table(nonMatchingTimes);
+        console.log(calculateStandardDeviation(nonMatchingTimes));
     });
 
     it('running time test for incorrect passwords with no timing safe function', async () => {
@@ -62,11 +63,12 @@ describe('validateUserCredentials timing test', () => {
             expect(result).toBe(false);
         }
         console.table(nonMatchingTimes);
+        console.log(calculateStandardDeviation(nonMatchingTimes));
     });
 
 });
 
-const generateRandomString= (length: number): string =>{
+const generateRandomString= (length: number): string => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
     const charactersLength = characters.length;
@@ -76,4 +78,14 @@ const generateRandomString= (length: number): string =>{
     }
 
     return result;
+}
+
+// Function to calculate standard deviation
+const calculateStandardDeviation =(numbers: number[]): number => {
+    const n = numbers.length;
+    const sum = numbers.reduce((acc, val) => acc + val, 0);
+    const mean = sum / n;
+    const squaredDiffs = numbers.map(x => Math.pow(x - mean, 2));
+    const variance = squaredDiffs.reduce((acc, val) => acc + val, 0) / n;
+    return Math.sqrt(variance)/sum;
 }
