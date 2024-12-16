@@ -1,9 +1,19 @@
 import {QueryCommandOutput} from "@aws-sdk/client-dynamodb";
-import {validateUserCredentials, validateUserCredentialsInsecure} from "../../src/utils/validateUserCredentials";
+import {validateUserCredentials} from "../../src/utils/validateUserCredentials";
 import * as argon2 from 'argon2';
+import jstat from 'jstat';
 
 const NUMBER_OF_ITERATIONS = 100;
+const CORRECT_PASSWORD = "correct_pass";
 describe('validateUserCredentials timing test', () => {
+    const NON_MATCHING_PASSWORDS: number[] = [];
+    const MATCHING_PASSWORDS: number[] = [];
+
+    afterAll(() => {
+        // eslint-disable-next-line security-node/detect-crlf
+        console.log("p-Value", calculateChiSquare(NON_MATCHING_PASSWORDS, MATCHING_PASSWORDS))
+    });
+
     it('running time test for incorrect passwords', async () => {
         const hash = await argon2.hash("correct_pass", {
             type: argon2.argon2id,
@@ -19,21 +29,20 @@ describe('validateUserCredentials timing test', () => {
                 }
             }], $metadata: {}
         };
-        const nonMatchingTimes: number[] = [];
+
         for (let i = 0; i < NUMBER_OF_ITERATIONS; i++) {
-            const incorrect_pass =generateRandomString(125)
+            const incorrect_pass = generateRandomString(125)
             const startMatching = performance.now();
             const result = await validateUserCredentials('username', incorrect_pass, userData);
             const endMatching = performance.now();
-            nonMatchingTimes.push(endMatching - startMatching);
+            NON_MATCHING_PASSWORDS.push(endMatching - startMatching);
             expect(result).toBe(false);
         }
-        console.table(nonMatchingTimes);
-        console.log(calculateStandardDeviation(nonMatchingTimes));
+        console.table(NON_MATCHING_PASSWORDS);
     });
 
-    it('running time test for incorrect passwords with no timing safe function', async () => {
-        const hash = await argon2.hash("correct_pass", {
+    it('running time test for correct passwords', async () => {
+        const hash = await argon2.hash(CORRECT_PASSWORD, {
             type: argon2.argon2id,
             memoryCost: 65536, // 64MB in KiB
             timeCost: 3,      // iterations
@@ -47,28 +56,20 @@ describe('validateUserCredentials timing test', () => {
                 }
             }], $metadata: {}
         };
-        const nonMatchingTimes: number[] = [];
+
         for (let i = 0; i < NUMBER_OF_ITERATIONS; i++) {
-            const hash_incorrect = await argon2.hash(generateRandomString(125), {
-                type: argon2.argon2id,
-                memoryCost: 65536, // 64MB in KiB
-                timeCost: 3,      // iterations
-                parallelism: 4,   // parallel threads
-                hashLength: 32    // output length in bytes
-            });
             const startMatching = performance.now();
-            const result = await validateUserCredentialsInsecure('username', hash_incorrect, userData);
+            const result = await validateUserCredentials('username', CORRECT_PASSWORD, userData);
             const endMatching = performance.now();
-            nonMatchingTimes.push(endMatching - startMatching);
-            expect(result).toBe(false);
+            MATCHING_PASSWORDS.push(endMatching - startMatching);
+            expect(result).toBe(true);
         }
-        console.table(nonMatchingTimes);
-        console.log(calculateStandardDeviation(nonMatchingTimes));
+        console.table(MATCHING_PASSWORDS);
     });
 
 });
 
-const generateRandomString= (length: number): string => {
+const generateRandomString = (length: number): string => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
     const charactersLength = characters.length;
@@ -80,12 +81,17 @@ const generateRandomString= (length: number): string => {
     return result;
 }
 
-// Function to calculate standard deviation
-const calculateStandardDeviation =(numbers: number[]): number => {
-    const n = numbers.length;
-    const sum = numbers.reduce((acc, val) => acc + val, 0);
-    const mean = sum / n;
-    const squaredDiffs = numbers.map(x => Math.pow(x - mean, 2));
-    const variance = squaredDiffs.reduce((acc, val) => acc + val, 0) / n;
-    return Math.sqrt(variance)/sum;
+
+const calculateChiSquare = (observed: number[], expected: number[]) => {
+    // Validate input
+    const degreesOfFreedom = observed.length - 1;
+
+    const chiSquared = observed.reduce((sum, obs, i) => {
+        const exp = expected[i];
+        return sum + Math.pow(obs - exp, 2) / exp;
+    }, 0);
+
+    const pValue = 1 - jstat.chisquare.cdf(chiSquared, degreesOfFreedom);
+
+    return {chiSquared, pValue, degreesOfFreedom};
 }
