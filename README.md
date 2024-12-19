@@ -11,7 +11,6 @@
 * <a href=https://nodejs.org/en/blog/release/v18.17.0>Node 18 and above</a>
 * <a href=https://classic.yarnpkg.com/lang/en/docs/install/#mac-stable>Yarn Package manager</a>
 * <a href=https://docs.localstack.cloud/user-guide/tools/localstack-desktop/>Local Stack Desktop (Optional)</a>. This tool is a UI which helps visualise localstack services and read logs etc.
-* 
 
 ## Installing Local Stack
 

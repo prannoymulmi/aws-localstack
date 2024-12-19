@@ -1,9 +1,9 @@
 import {QueryCommandOutput} from "@aws-sdk/client-dynamodb";
 import {validateUserCredentials} from "../../src/utils/validateUserCredentials";
 import * as argon2 from 'argon2';
-import jstat from 'jstat';
+import jstat from 'test/integtest/jstat';
 
-const NUMBER_OF_ITERATIONS = 100;
+const NUMBER_OF_ITERATIONS = 1000;
 const CORRECT_PASSWORD = "correct_pass";
 describe('validateUserCredentials timing test', () => {
     const NON_MATCHING_PASSWORDS: number[] = [];
@@ -82,16 +82,12 @@ const generateRandomString = (length: number): string => {
 }
 
 
-const calculateChiSquare = (observed: number[], expected: number[]) => {
-    // Validate input
-    const degreesOfFreedom = observed.length - 1;
-
-    const chiSquared = observed.reduce((sum, obs, i) => {
-        const exp = expected[i];
+const calculateChiSquare = (sample1: number[], sample2: number[]) => {
+    const degreesOfFreedom = sample1.length - 1;
+    const chiSquared = sample1.reduce((sum, obs, i) => {
+        const exp = sample2[i];
         return sum + Math.pow(obs - exp, 2) / exp;
     }, 0);
-
     const pValue = 1 - jstat.chisquare.cdf(chiSquared, degreesOfFreedom);
-
     return {chiSquared, pValue, degreesOfFreedom};
 }
