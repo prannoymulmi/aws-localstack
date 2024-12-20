@@ -66,25 +66,6 @@ resource "aws_iam_policy" "lambda_cloudwatch_policy" {
   })
 }
 
-# IAM Policy for Lambda to log to CloudWatch
-resource "aws_iam_policy" "test_bad_policy" {
-  name        = "lambda_cloudwatch_logs_policy"
-  description = "IAM policy to allow Lambda to write logs to CloudWatch"
-
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect = "Allow",
-        Action = [
-          "*:*"
-        ],
-        Resource = "*"
-      }
-    ]
-  })
-}
-
 
 # IAM Policy for Lambda to log to CloudWatch
 resource "aws_iam_policy" "private_key_read_policy" {

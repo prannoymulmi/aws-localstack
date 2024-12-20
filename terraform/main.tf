@@ -16,6 +16,5 @@ module "pkce_token_lambda" {
     aws_iam_policy.lambda_dynamodb_policy.arn,
     aws_iam_policy.lambda_cloudwatch_policy.arn,
     aws_iam_policy.private_key_read_policy.arn,
-    aws_iam_policy.test_bad_policy.arn
   ]
 }

@@ -36,6 +36,8 @@ export type TokenRequest ={
     codeVerifier: string;
 }
 
+const sha256Regex = /^[A-Fa-f0-9]{64}$/;
+
 export const authorizationSchema = z.object({
     response_type: z.literal('code').optional() ,
     username: z.string(),
@@ -44,7 +46,11 @@ export const authorizationSchema = z.object({
     redirect_uri: z.string().url().optional() ,
     scope: z.string().optional() ,
     state: z.string().optional() ,
-    codeChallenge: z.string(),
+    codeChallenge: z.string().refine((val) => {
+        return sha256Regex.test(val);
+    }, {
+        message: 'Invalid code_challenge: must be a SHA-256 hashed string'
+    }),
     code_challenge_method: z.literal('S256').optional() ,
 });
 
