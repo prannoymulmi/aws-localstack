@@ -1,7 +1,7 @@
 import {QueryCommandOutput} from "@aws-sdk/client-dynamodb";
 import {validateUserCredentials} from "../../src/utils/validateUserCredentials";
 import * as argon2 from 'argon2';
-import jstat from 'test/integtest/jstat';
+import * as jstat from "jstat";
 
 const NUMBER_OF_ITERATIONS = 1000;
 const CORRECT_PASSWORD = "correct_pass";
