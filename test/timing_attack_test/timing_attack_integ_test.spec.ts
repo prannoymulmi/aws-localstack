@@ -32,9 +32,9 @@ describe('validateUserCredentials timing test', () => {
 
         for (let i = 0; i < NUMBER_OF_ITERATIONS; i++) {
             const incorrect_pass = generateRandomString(125)
-            const startMatching = performance.now();
+            const startMatching = Math.round(performance.now() * 100) / 100;;
             const result = await validateUserCredentials('username', incorrect_pass, userData);
-            const endMatching = performance.now();
+            const endMatching = Math.round(performance.now() * 100) / 100;;
             NON_MATCHING_PASSWORDS.push(endMatching - startMatching);
             expect(result).toBe(false);
         }
@@ -58,9 +58,9 @@ describe('validateUserCredentials timing test', () => {
         };
 
         for (let i = 0; i < NUMBER_OF_ITERATIONS; i++) {
-            const startMatching = performance.now();
+            const startMatching = Math.round(performance.now() * 100) / 100;;
             const result = await validateUserCredentials('username', CORRECT_PASSWORD, userData);
-            const endMatching = performance.now();
+            const endMatching = Math.round(performance.now() * 100) / 100;;
             MATCHING_PASSWORDS.push(endMatching - startMatching);
             expect(result).toBe(true);
         }
@@ -88,6 +88,6 @@ const calculateChiSquare = (sample1: number[], sample2: number[]) => {
         const exp = sample2[i];
         return sum + Math.pow(obs - exp, 2) / exp;
     }, 0);
-    const pValue = 1 - jstat.chisquare.cdf(chiSquared, degreesOfFreedom);
+    const pValue = Number((1 - jstat.chisquare.cdf(chiSquared, degreesOfFreedom)).toFixed(2));
     return {chiSquared, pValue, degreesOfFreedom};
 }
